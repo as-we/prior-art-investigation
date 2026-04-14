@@ -47,7 +47,7 @@ It returns:
 
 **Concept**: Knowledge Distillation
 
-> This technique has a 10+ year history. It started as a model compression method (Hinton et al., 2015: "Distilling the Knowledge in a Neural Network"), evolved through DistilBERT (2019), MiniLM (2021), and exploded with LLM applications starting in 2023. The core insight: a small model can learn from a large model's outputs + reasoning, achieving 90% of performance at 10% of compute.
+> This technique has a 10+ year history. It started as a model compression method ([Hinton et al., 2015](https://arxiv.org/abs/1503.02531): "Distilling the Knowledge in a Neural Network"), evolved through [DistilBERT](https://arxiv.org/abs/1910.01108) (2019), [MiniLM](https://arxiv.org/abs/2002.10957) (2021), and exploded with LLM applications starting in 2023. The core insight: a small model can learn from a large model's outputs + reasoning, achieving 90% of performance at 10% of compute.
 
 **Research lineage**:
 | Year | Paper | Key Insight |
