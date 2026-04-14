@@ -21,21 +21,30 @@
     "requirements",
     "design"
   ],
+  "main": "docs/en/README.md",
+  "types": "docs/en/README.md",
+  "sideEffects": false,
   "files": [
-    "docs",
+    "docs/en",
+    "docs/ja",
     "LICENSE",
     "README.md"
   ],
   "exports": {
-    ".": "./package.json",
+    ".": {
+      "import": "./README.md",
+      "require": "./README.md"
+    },
+    "./docs": "./docs",
     "./docs/en": "./docs/en",
     "./docs/ja": "./docs/ja",
-    "./docs/en/templates": "./docs/en/templates",
-    "./docs/ja/templates": "./docs/ja/templates",
-    "./docs/en/github/prompts": "./docs/en/github/prompts",
-    "./docs/ja/github/prompts": "./docs/ja/github/prompts",
-    "./docs/en/kiro/settings": "./docs/en/kiro/settings",
-    "./docs/ja/kiro/settings": "./docs/ja/kiro/settings"
+    "./templates": "./docs/en/templates/research.md",
+    "./templates/research": "./docs/en/templates/research.md",
+    "./prompts": "./docs/en/github/prompts",
+    "./prompts/selector": "./docs/en/github/prompts/selector.prompt.md",
+    "./prompts/minimal": "./docs/en/github/prompts/minimal.prompt.md",
+    "./prompts/full": "./docs/en/github/prompts/full.prompt.md",
+    "./rules": "./docs/en/kiro/settings/rules/oss-evaluation.md"
   },
   "scripts": {
     "setup:kiro-en": "cp -r docs/en docs/ja docs/en/kiro/settings/rules/oss-evaluation.md .kiro/settings/rules/ && cp docs/en/templates/research.md .kiro/settings/templates/specs/",
@@ -45,6 +54,10 @@
   },
   "engines": {
     "node": ">=16.0.0"
+  },
+  "mcp": {
+    "name": "prior-art-investigation",
+    "description": "Prior Art Investigation Framework - MCP Server Integration (Future)"
   },
   "publishConfig": {
     "access": "public"
