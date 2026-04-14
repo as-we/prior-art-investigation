@@ -32,11 +32,11 @@ It returns:
 
 ## How It Works
 
-| Mode | Use When | Time | Tokens |
-|------|----------|------|--------|
-| **minimal** | Early concept check — just the name + quick OSS list | 5-10 min | ~150 |
-| **full** | Design phase — research history, evaluation matrix, tradeoffs, risks | 20-40 min | ~500 |
-| **selector** | Not sure which phase | 1-2 min | auto-routes |
+| Mode | Use When | Output |
+|------|----------|---------|
+| **minimal** | Early concept check, before design | Concept name + quick OSS list + risk flags |
+| **full** | Architecture decisions, new subsystem design | Research lineage + OSS matrix + tradeoffs + failure modes |
+| **selector** | Not sure which to use | Auto-routes to minimal or full |
 
 <details>
 <summary><strong>Example: Full investigation output</strong></summary>
