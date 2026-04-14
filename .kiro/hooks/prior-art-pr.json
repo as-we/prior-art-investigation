@@ -1,0 +1,10 @@
+{
+  "phase": "post-pr",
+  "personality": null,
+  "trigger": "after_kiro_post_pr",
+  "enabled": true,
+  "timeout_seconds": 300,
+  "retry_count": 1,
+  "output_format": "json",
+  "description": "Generate ADR with prior art context and archive findings"
+}

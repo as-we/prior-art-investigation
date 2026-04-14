@@ -1,0 +1,23 @@
+{
+  "name": "team-internal",
+  "label": "Team Internal Explorer",
+  "description": "Focus on internal team knowledge, documentation, and existing patterns",
+  "questions": [
+    "Has our team tackled a similar problem before?",
+    "What documentation exists within our codebase?",
+    "What architectural patterns does our team prefer?",
+    "Are there internal tools or libraries we can reuse?",
+    "What lessons did past projects teach us?",
+    "What conventions has our team established?",
+    "How should this integrate with existing team systems?"
+  ],
+  "output_format": "markdown",
+  "web_sources": ["Internal Wiki", "GitHub Issues", "Documentation", "Code Comments", "Team Slack"],
+  "metadata": {
+    "color": "#6A5ACD",
+    "icon": "👥",
+    "tags": ["internal", "team", "knowledge"]
+  },
+  "created_at": "2026-04-15",
+  "version": "1.0"
+}

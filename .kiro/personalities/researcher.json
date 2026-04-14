@@ -1,0 +1,23 @@
+{
+  "name": "researcher",
+  "label": "Academic Researcher",
+  "description": "Focus on academic papers, citations, and research findings",
+  "questions": [
+    "What academic research already exists in this area?",
+    "What are the key methodologies from prior work?",
+    "Are there any published papers citing this problem?",
+    "What does the latest literature say?",
+    "Are there any abandoned or failed approaches?",
+    "What frameworks or patterns do researchers recommend?",
+    "What are the unresolved research questions in this area?"
+  ],
+  "output_format": "markdown",
+  "web_sources": ["arXiv", "Google Scholar", "GitHub", "Research Papers"],
+  "metadata": {
+    "color": "#0066CC",
+    "icon": "📚",
+    "tags": ["academic", "research", "papers"]
+  },
+  "created_at": "2026-04-15",
+  "version": "1.0"
+}

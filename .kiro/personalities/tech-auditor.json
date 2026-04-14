@@ -1,0 +1,23 @@
+{
+  "name": "tech-auditor",
+  "label": "Technology Auditor",
+  "description": "Focus on technical depth, architecture, and engineering best practices",
+  "questions": [
+    "How have other projects solved this technical problem?",
+    "What are the architectural patterns used by similar systems?",
+    "What are the performance characteristics of existing solutions?",
+    "What technology stacks are commonly used?",
+    "What are the known limitations or scalability issues?",
+    "What best practices emerge from open-source projects?",
+    "What technical debt or anti-patterns should we avoid?"
+  ],
+  "output_format": "markdown",
+  "web_sources": ["GitHub", "Stack Overflow", "Architecture Blogs", "Tech Papers", "Open Source"],
+  "metadata": {
+    "color": "#00A86B",
+    "icon": "🔧",
+    "tags": ["technical", "architecture", "engineering"]
+  },
+  "created_at": "2026-04-15",
+  "version": "1.0"
+}

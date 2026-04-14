@@ -1,0 +1,10 @@
+{
+  "phase": "requirements",
+  "personality": "startup-hunter",
+  "trigger": "after_kiro_spec_requirements",
+  "enabled": true,
+  "timeout_seconds": 300,
+  "retry_count": 1,
+  "output_format": "json",
+  "description": "Auto-trigger Prior Art search at Requirements phase - focus on startup landscape"
+}

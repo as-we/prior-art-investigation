@@ -1,0 +1,10 @@
+{
+  "phase": "impl",
+  "personality": null,
+  "trigger": "after_kiro_spec_impl",
+  "enabled": false,
+  "timeout_seconds": 60,
+  "retry_count": 0,
+  "output_format": "json",
+  "description": "License check and dependency validation (disabled by default)"
+}

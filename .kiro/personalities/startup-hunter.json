@@ -1,0 +1,23 @@
+{
+  "name": "startup-hunter",
+  "label": "Startup Hunter",
+  "description": "Focus on market validation, competitor analysis, and startup trends",
+  "questions": [
+    "What startups already exist in this market?",
+    "What are our direct competitors trying to do?",
+    "How do competitors price and position their solutions?",
+    "What acquisition or funding trends exist in this space?",
+    "What problems have startups tried and failed to solve?",
+    "How successful are similar solutions in adjacent markets?",
+    "What market gaps exist that no startup has filled yet?"
+  ],
+  "output_format": "structured-report",
+  "web_sources": ["Crunchbase", "Product Hunt", "Y Combinator", "Tech News", "GitHub Trending"],
+  "metadata": {
+    "color": "#FF6B35",
+    "icon": "🚀",
+    "tags": ["market", "competitors", "startup"]
+  },
+  "created_at": "2026-04-15",
+  "version": "1.0"
+}

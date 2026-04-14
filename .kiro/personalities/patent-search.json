@@ -1,0 +1,23 @@
+{
+  "name": "patent-search",
+  "label": "Patent Researcher",
+  "description": "Focus on IP risk, prior art claims, and patent landscape",
+  "questions": [
+    "Are there any existing patents related to this innovation?",
+    "What is the patent landscape in this technology area?",
+    "Are there any pending patent applications we should know about?",
+    "What prior art could invalidate potential patents?",
+    "What IP claims do competitors already hold?",
+    "Are there any expired patents that are now freely available?",
+    "What licensing restrictions should we be aware of?"
+  ],
+  "output_format": "structured-report",
+  "web_sources": ["Google Patents", "USPTO", "WIPO", "Patent Databases", "Academic Patents"],
+  "metadata": {
+    "color": "#8B4513",
+    "icon": "⚖️",
+    "tags": ["ip", "patents", "legal"]
+  },
+  "created_at": "2026-04-15",
+  "version": "1.0"
+}
