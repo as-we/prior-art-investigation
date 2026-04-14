@@ -1,10 +1,9 @@
 #!/bin/bash
-# Kiro Requirements フェーズ用 Prior Art 自動トリガー
-# 仕様書参照: v1.2.0_DESIGN.md - Task 2.2
+# Prior Art auto-trigger for Kiro Requirements phase
 
 set -e
 
-# 環境変数を取得
+# Read environment variables
 KIRO_PHASE="${KIRO_PHASE:-requirements}"
 KIRO_FEATURE="${KIRO_FEATURE:-unknown}"
 PRIOR_ART_PERSONALITY="${PRIOR_ART_PERSONALITY:-startup-hunter}"
@@ -17,7 +16,7 @@ log() {
 
 log "Starting Prior Art search for $KIRO_FEATURE (personality: $PRIOR_ART_PERSONALITY)"
 
-# Python でメイン処理を実行
+# Run main logic via Python
 python3 << 'PYTHON_EOF'
 import json
 import os
@@ -25,17 +24,17 @@ import sys
 from pathlib import Path
 from datetime import datetime
 
-# 環境変数から設定を取得
+# Read config from environment
 kiro_phase = os.environ.get("KIRO_PHASE", "requirements")
 kiro_feature = os.environ.get("KIRO_FEATURE", "unknown")
 personality = os.environ.get("PRIOR_ART_PERSONALITY", "startup-hunter")
 archive_dir = os.environ.get("PRIOR_ART_ARCHIVE", ".kiro/prior-art-archive/")
 
-# アーカイブディレクトリを作成
+# Create archive directory
 archive_path = Path(archive_dir)
 archive_path.mkdir(parents=True, exist_ok=True)
 
-# 検索結果（シミュレーション）
+# Investigation findings
 findings = {
     "metadata": {
         "feature": kiro_feature,
@@ -54,18 +53,18 @@ findings = {
     "quality_score": 0.8
 }
 
-# JSON として出力
+# Output as JSON
 output = json.dumps(findings, indent=2)
 print(output)
 
-# spec.json に添付する場合の処理
+# Attach to spec.json if it exists
 spec_file = Path("spec.json")
 if spec_file.exists():
     try:
         with open(spec_file) as f:
             spec = json.load(f)
         
-        # prior_art_findings を追加
+        # Attach findings
         if "prior_art_findings" not in spec:
             spec["prior_art_findings"] = {}
         

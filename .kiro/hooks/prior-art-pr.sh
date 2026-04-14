@@ -1,10 +1,9 @@
 #!/bin/bash
-# Kiro Post-PR フェーズ用 ADR 生成・アーカイブ
-# 仕様書参照: v1.2.0_DESIGN.md - Task 2.4
+# ADR generation and archiving for Kiro Post-PR phase
 
 set -e
 
-# 環境変数を取得
+# Read environment variables
 KIRO_PHASE="${KIRO_PHASE:-post-pr}"
 KIRO_FEATURE="${KIRO_FEATURE:-unknown}"
 PRIOR_ART_ARCHIVE="${PRIOR_ART_ARCHIVE:-.kiro/prior-art-archive/}"
@@ -16,7 +15,7 @@ log() {
 
 log "Starting ADR generation and archiving for $KIRO_FEATURE"
 
-# Python でメイン処理を実行
+# Run main logic via Python
 python3 << 'PYTHON_EOF'
 import json
 import os
@@ -24,16 +23,16 @@ import sys
 from pathlib import Path
 from datetime import datetime
 
-# 環境変数から設定を取得
+# Read config from environment
 kiro_phase = os.environ.get("KIRO_PHASE", "post-pr")
 kiro_feature = os.environ.get("KIRO_FEATURE", "unknown")
 archive_dir = os.environ.get("PRIOR_ART_ARCHIVE", ".kiro/prior-art-archive/")
 
-# アーカイブディレクトリを作成
+# Create archive directory
 archive_path = Path(archive_dir)
 archive_path.mkdir(parents=True, exist_ok=True)
 
-# spec.json から前のフェーズの findings を取得
+# Load findings from previous phases in spec.json
 spec_file = Path("spec.json")
 all_findings = {}
 
@@ -46,7 +45,7 @@ if spec_file.exists():
     except Exception as e:
         print(f"[WARNING] Could not read spec.json: {e}", file=sys.stderr)
 
-# ADR メタデータ
+# ADR metadata
 adr_metadata = {
     "metadata": {
         "feature": kiro_feature,
@@ -58,11 +57,11 @@ adr_metadata = {
     "summary": f"Architecture decisions for {kiro_feature} based on prior art investigation"
 }
 
-# JSON として出力
+# Output as JSON
 output = json.dumps(adr_metadata, indent=2)
 print(output)
 
-# アーカイブに保存
+# Save to archive
 archive_file = archive_path / f"{kiro_feature}_adr_context.json"
 try:
     with open(archive_file, "w") as f:
