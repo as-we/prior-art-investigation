@@ -6,55 +6,69 @@
 
 ## What It Does
 
-When starting from scratch — no reference code, no prior art — it's easy to reinvent what already exists or pick the wrong foundation.
+You have a problem but don't know what it's called or if it's already solved.
 
-This framework prompts an AI agent to investigate your concept **before you build**, and returns:
+**Example problem**: 
+> "I want to use an LLM to generate training data and reasoning explanations, then teach a smaller ML model to replicate that behavior. How do I build this?"
 
-- **The right name** — the industry-standard term for your concept (e.g., "auto-refresh cache" → "Cache-Aside Pattern")
-- **Existing OSS** — ranked options with tradeoff evaluation, not just a list
-- **Research lineage** — where the idea came from, which papers or systems validated it, how it evolved
-- **Known failure points** — what tends to break before you're committed to an architecture
+**What this framework does**:
+Before you design a solution, run an investigation:
+
+```
+@prior-art-investigation full I want to use LLM outputs to train a smaller ML model
+```
+
+It returns:
+
+- **The name** — "Knowledge Distillation" (a 2015 technique by Hinton et al.)
+- **Historical lineage** — How it evolved from model compression → neural network distillation → LLM distillation (2023+)
+- **Existing OSS** — DistilBERT, LLaMA-Factory, Hugging Face transformers API, with evaluation of each
+- **Known risks** — Data quality dependency, teacher model bias, training instability
+
+Without this framework, you'd spend days searching "LLM training smaller model" and rarely find the term "knowledge distillation" that connects all existing work.
+
+---
+
+## How It Works
 
 | Mode | Use When | Time | Tokens |
 |------|----------|------|--------|
-| **minimal** | Requirements phase — concept naming + quick OSS scan | 5-10 min | ~150 |
-| **full** | Design phase — deep research, evaluation matrix, tradeoffs | 20-40 min | ~500 |
+| **minimal** | Early concept check — just the name + quick OSS list | 5-10 min | ~150 |
+| **full** | Design phase — research history, evaluation matrix, tradeoffs, risks | 20-40 min | ~500 |
 | **selector** | Not sure which phase | 1-2 min | auto-routes |
 
 <details>
-<summary><strong>Example output (full mode)</strong></summary>
+<summary><strong>Example: Full investigation output</strong></summary>
 
-**Input**: `@prior-art-investigation full We need consistent distributed locking across microservices`
+**Input**: `@prior-art-investigation full I want to use LLM outputs to train a smaller ML model`
 
 **Output**:
 
-**Concept identified**: Distributed Mutex / Distributed Lock
+**Concept**: Knowledge Distillation
 
-> This is a well-scoped problem. The term "distributed locking" maps to a body of research starting with Lamport's 1978 paper on logical clocks, expanded through the Chubby lock service (Google, 2006), and popularized for application developers via Redis-based implementations.
+> This technique has a 10+ year history. It started as a model compression method (Hinton et al., 2015: "Distilling the Knowledge in a Neural Network"), evolved through DistilBERT (2019), MiniLM (2021), and exploded with LLM applications starting in 2023. The core insight: a small model can learn from a large model's outputs + reasoning, achieving 90% of performance at 10% of compute.
 
 **Research lineage**:
-| Year | Milestone |
-|------|-----------|
-| 1978 | Lamport — Logical Clocks, foundational ordering theory |
-| 2006 | Google Chubby — first production distributed lock service |
-| 2016 | Redlock algorithm (Antirez) — Redis-based distributed lock |
-| 2016 | Martin Kleppmann critique — safety concerns with Redlock under clock skew |
-| 2023 | etcd RAFT-based leases now standard for k8s-adjacent systems |
+| Year | Paper | Key Insight |
+|------|-------|------------|
+| 2015 | Hinton et al. "Distilling the Knowledge in a Neural Network" | Temperature-scaled softmax enables knowledge transfer |
+| 2019 | Sanh et al. "DistilBERT" | BERT-scale distillation is practical |
+| 2021 | Wang et al. "MiniLM" | Layer-wise intermediate matching improves small models |
+| 2023 | Li et al. "Distilling Step-by-Step" | LLM reasoning can be distilled, not just outputs |
+| 2024 | Craft et al. "LLaMA-Factory" | Production-ready distillation pipelines |
 
-**OSS evaluation matrix**:
-| Tool | Consistency | Ops Complexity | Best For |
-|------|-------------|----------------|----------|
-| Redis + Redlock | ⚠️ Not strictly safe | Low | Latency-sensitive, tolerate rare failures |
-| etcd leases | ✅ Strong (RAFT) | Medium | Kubernetes-adjacent, infra-level |
-| ZooKeeper | ✅ Strong | High | JVM ecosystem, existing ZK usage |
-| PostgreSQL advisory locks | ✅ Strong | Low | Already on Postgres, simple case |
+**OSS Evaluation Matrix**:
+| Tool | Distillation Type | Reasoning Support | Ops Complexity | Best For |
+|------|-----|---|---|---|
+| Hugging Face transformers | Layer-wise | ❌ No | Low | Standard BERT-scale models |
+| LLaMA-Factory | Full pipeline | ✅ Yes | Medium | LLM distillation end-to-end |
+| Distil training code (papers) | Custom | ❌ No | High | Research, custom architectures |
 
-**Recommendation**: PostgreSQL advisory locks if you're already on Postgres. etcd if you need true distributed consensus. Avoid Redlock unless failure tolerance is explicitly acceptable.
-
-**Known failure points**:
-- Clock skew invalidates TTL assumptions in Redlock
-- Lock holder crashes before releasing → need heartbeat / fencing token
-- Re-entrant lock requirements add complexity most implementations skip
+**Key Risks**:
+- **Teacher bias**: Small model inherits teacher's errors + biases
+- **Data quality**: Without high-quality reasoning labels, distillation fails
+- **Instability**: Temperature tuning and loss weighting are sensitive
+- **Verify**: Always A/B test against direct training on data
 
 </details>
 
