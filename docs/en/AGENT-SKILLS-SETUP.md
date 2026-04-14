@@ -300,5 +300,20 @@ Yes! See patterns in [Option B](#option-b-project-specific-agent) and [Integrati
 
 ---
 
+## Complete Usage Guide
+
+See **[AGENT-SKILLS-USAGE.md](./AGENT-SKILLS-USAGE.md)** for:
+- ✅ Environment setup instructions
+- ✅ Complete command reference
+- ✅ Kiro SDD integration examples
+- ✅ Troubleshooting guide
+- ✅ Advanced configuration
+
+**Version**: 1.0.0  
+**Status**: ✅ Ready to use  
+**Last Updated**: 2026-04-14
+
+---
+
 **License**: MIT  
 **Support**: github.com/ma2tani/prior-art-investigation/issues
