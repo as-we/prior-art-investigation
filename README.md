@@ -52,11 +52,11 @@ It returns:
 **Research lineage**:
 | Year | Paper | Key Insight |
 |------|-------|------------|
-| 2015 | Hinton et al. "Distilling the Knowledge in a Neural Network" | Temperature-scaled softmax enables knowledge transfer |
-| 2019 | Sanh et al. "DistilBERT" | BERT-scale distillation is practical |
-| 2021 | Wang et al. "MiniLM" | Layer-wise intermediate matching improves small models |
-| 2023 | Li et al. "Distilling Step-by-Step" | LLM reasoning can be distilled, not just outputs |
-| 2024 | Craft et al. "LLaMA-Factory" | Production-ready distillation pipelines |
+| 2015 | Hinton et al. ["Distilling the Knowledge in a Neural Network"](https://arxiv.org/abs/1503.02531) | Temperature-scaled softmax enables knowledge transfer |
+| 2019 | Sanh et al. ["DistilBERT"](https://arxiv.org/abs/1910.01108) | BERT-scale distillation is practical |
+| 2021 | Wang et al. ["MiniLM"](https://arxiv.org/abs/2002.10957) | Layer-wise intermediate matching improves small models |
+| 2023 | Li et al. ["Distilling Step-by-Step"](https://arxiv.org/abs/2212.10071) | LLM reasoning can be distilled, not just outputs |
+| 2024 | Zheng et al. ["LLaMA-Factory"](https://arxiv.org/abs/2403.13372) | Production-ready distillation pipelines |
 
 **OSS Evaluation Matrix**:
 | Tool | License | Maintainer | Updated | Data Prep | Best For | Source |

@@ -43,6 +43,7 @@ PROMPT_FULL = """
 ## Q2: Concept Name
 - What is this technically called in the field?
 - What established patterns or paradigms apply?
+- Provide a research lineage table: Year | Paper (with arXiv/DOI link, mandatory) | Key Insight
 
 ## Q3: Technical Options
 - What approaches / algorithms / architectures exist?
