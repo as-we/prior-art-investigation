@@ -135,6 +135,27 @@ Prior art investigation runs automatically at requirements and design phases.
 
 ---
 
+## Optional: Control Hook Execution
+
+Each prior art investigation increases token consumption. You can disable hooks for contexts where investigation is not needed:
+
+### Disable hooks
+1. Open `.kiro/hooks/prior-art-requirements.json`
+2. Change `"enabled": true` to `"enabled": false`
+3. Repeat for `.kiro/hooks/prior-art-design.json`
+
+### When to disable
+- **Maintenance / refactoring** — existing codebase, no new paradigms
+- **Well-known patterns** — already familiar, investigation not needed
+- **Token budget constraint** — running multiple investigations in parallel
+
+### When to keep enabled
+- **Greenfield / zero-to-one projects** — unknown territory, high discovery value
+- **Major architecture decisions** — new subsystem design, new dependency selection
+- **Technology selection** — choosing between OSS options
+
+---
+
 ## Personalities (Kiro SDD)
 
 Switch investigation focus by selecting a personality:
