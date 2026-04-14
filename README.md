@@ -6,13 +6,16 @@
 
 ## What It Does
 
-You have a problem but don't know what it's called or if it's already solved.
+With spec-driven development (SDD), you can move from idea to implementation using plain problem statements.
 
-**Example problem**: 
-> "I want to use an LLM to generate training data and reasoning explanations, then teach a smaller ML model to replicate that behavior. How do I build this?"
+For example:
+> "I want to use an LLM to generate reasoning explanations, then train a smaller ML model on those outputs."
 
-**What this framework does**:
-Before you design a solution, run an investigation:
+That single sentence is enough to drive requirements, design, and implementation. **But there's a blind spot.**
+
+A well-established research field called "Knowledge Distillation" already exists — with 10+ years of papers, OSS tools, and documented failure patterns. Without knowing that term, you'd rebuild it from scratch, convinced you invented it.
+
+**This framework eliminates that blind spot before you start designing.**
 
 ```
 @prior-art-investigation full I want to use LLM outputs to train a smaller ML model
@@ -20,12 +23,10 @@ Before you design a solution, run an investigation:
 
 It returns:
 
-- **The name** — "Knowledge Distillation" (a 2015 technique by Hinton et al.)
-- **Historical lineage** — How it evolved from model compression → neural network distillation → LLM distillation (2023+)
-- **Existing OSS** — DistilBERT, LLaMA-Factory, Hugging Face transformers API, with evaluation of each
-- **Known risks** — Data quality dependency, teacher model bias, training instability
-
-Without this framework, you'd spend days searching "LLM training smaller model" and rarely find the term "knowledge distillation" that connects all existing work.
+- **The name** — "Knowledge Distillation" (a known research area since Hinton et al., 2015)
+- **Research lineage** — Model compression → neural distillation → LLM distillation boom (2023+)
+- **Existing OSS** — DistilBERT, LLaMA-Factory, Hugging Face transformers, with evaluation matrix
+- **Known failure points** — Data quality dependency, teacher bias, training instability
 
 ---
 
