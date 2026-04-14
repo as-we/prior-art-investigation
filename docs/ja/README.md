@@ -21,7 +21,7 @@
 ### 方法 1: VS Code Copilot（最速）
 ```
 @prior-art-investigation minimal
-リアルタイムグルーヴ推薦機能が必要
+高性能キャッシングレイヤーが必要
 ```
 **セットアップ**: 0 分 | **実行**: 5-10 分 | **コスト**: ~150 トークン
 
@@ -198,15 +198,15 @@ docs/ja/
 
 ### 例 2: 深層アーキテクチャ調査（20 分）
 ```
-ユーザー: "@prior-art-investigation full ML ベースのリズム検出を設計中"
+ユーザー: "@prior-art-investigation full 全テキスト検索エンジンを設計中"
 
 エージェント: (Q1-Q7 調査)
-- 概念: 「Onset 検出」または「ビート追跡」
-- 既存 OSS: librosa、madmom、essentia
-- アーキテクチャ: バッチ vs リアルタイムトレードオフ
-- リスク: モデル精度、レイテンシー、バージョニング
-- 推奨: librosa ベースラインで開始
-- ステータス: .kiro/specs/rhythm-detection/docs/research.md に保存 ✓
+- 概念: 「フルテキスト検索」または「情報検索システム」
+- 既存 OSS: Elasticsearch、Meilisearch、Typesense
+- アーキテクチャ: リアルタイムインデックス vs バッチ処理トレードオフ
+- リスク: インデックス作成時間、検索精度、スケーラビリティ
+- 推奨: Meilisearch で PoC 開始
+- ステータス: .kiro/specs/full-text-search/docs/research.md に保存 ✓
 ```
 
 ---

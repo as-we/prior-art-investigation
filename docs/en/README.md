@@ -21,7 +21,7 @@ Identifying the concept **before** coding unlocks best practices, known tradeoff
 ### Option 1: VS Code Copilot (Fastest)
 ```
 @prior-art-investigation minimal
-I need real-time groove recommendations
+I need a high-performance caching layer for our API
 ```
 **Setup time**: 0 minutes | **Execution**: 5-10 min | **Cost**: ~150 tokens
 
@@ -201,15 +201,15 @@ Agent:
 
 ### Example 2: Deep Architecture Research (20 min)
 ```
-User: "@prior-art-investigation full Designing ML-based rhythm detection"
+User: "@prior-art-investigation full Designing a full-text search engine"
 
 Agent: (Q1-Q7 investigation)
-- Concept: "Onset detection" or "Beat tracking"
-- Existing OSS: librosa, madmom, essentia
-- Architecture: Batch vs real-time tradeoffs
-- Risks: Model accuracy, latency, versioning
-- Recommendation: Start with librosa baseline
-- Status: Save to .kiro/specs/rhythm-detection/docs/research.md ✓
+- Concept: "Full-text search" or "Information retrieval system"
+- Existing OSS: Elasticsearch, Meilisearch, Typesense
+- Architecture: Real-time indexing vs batch processing tradeoffs
+- Risks: Index creation time, search relevance, scalability
+- Recommendation: Start with Meilisearch for PoC
+- Status: Save to .kiro/specs/full-text-search/docs/research.md ✓
 ```
 
 ---
