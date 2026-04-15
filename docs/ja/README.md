@@ -142,19 +142,18 @@ cp -r .kiro/personalities /your-project/.kiro/
 cp .kiro/hooks/*.kiro.hook /your-project/.kiro/hooks/
 ```
 
-**VS Code で無効化**（ファイルリネーム方式）:
+**VS Code で無効化**（`enabled` フラグを編集）:
 ```bash
 # 要件フックのみ無効化
-mv .kiro/hooks/prior-art-requirements.kiro.hook \
-   .kiro/hooks/prior-art-requirements.kiro.hook.disabled
+# .kiro/hooks/prior-art-requirements.kiro.hook を開く:
+# "enabled": true を "enabled": false に変更
 
 # 設計フックのみ無効化
-mv .kiro/hooks/prior-art-design.kiro.hook \
-   .kiro/hooks/prior-art-design.kiro.hook.disabled
+# .kiro/hooks/prior-art-design.kiro.hook を開く:
+# "enabled": true を "enabled": false に変更
 
 # 再度有効化
-mv .kiro/hooks/prior-art-requirements.kiro.hook.disabled \
-   .kiro/hooks/prior-art-requirements.kiro.hook
+# "enabled": false を "enabled": true に戻す
 ```
 
 **注意**: VS Code フックは `agentStop` トリガー + git diff 検知（`requirements.md` または `design.md` が変更されたか確認）を使用します。Kiro IDE フックはコマンド固有トリガー（`after_kiro_spec_requirements`、`after_kiro_spec_design`）を使用します。

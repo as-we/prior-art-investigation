@@ -142,19 +142,18 @@ The `.kiro/hooks/` directory includes both **Kiro IDE** format (`.json` with `en
 cp .kiro/hooks/*.kiro.hook /your-project/.kiro/hooks/
 ```
 
-**To disable in VS Code** (file rename):
+**To disable in VS Code** (edit `enabled` flag):
 ```bash
 # Disable requirements hook only
-mv .kiro/hooks/prior-art-requirements.kiro.hook \
-   .kiro/hooks/prior-art-requirements.kiro.hook.disabled
+# Edit .kiro/hooks/prior-art-requirements.kiro.hook:
+# Change "enabled": true to "enabled": false
 
 # Disable design hook only  
-mv .kiro/hooks/prior-art-design.kiro.hook \
-   .kiro/hooks/prior-art-design.kiro.hook.disabled
+# Edit .kiro/hooks/prior-art-design.kiro.hook:
+# Change "enabled": true to "enabled": false
 
 # Re-enable
-mv .kiro/hooks/prior-art-requirements.kiro.hook.disabled \
-   .kiro/hooks/prior-art-requirements.kiro.hook
+# Change "enabled": false back to "enabled": true
 ```
 
 **Note**: VS Code hooks use `agentStop` trigger + git diff detection (checks if `requirements.md` or `design.md` changed). Kiro IDE hooks use command-specific triggers (`after_kiro_spec_requirements`, `after_kiro_spec_design`).
