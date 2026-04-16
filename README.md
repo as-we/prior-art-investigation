@@ -211,6 +211,7 @@ Switch investigation focus by selecting a personality:
 | `tech-auditor` | Technical depth, architecture, engineering best practices |
 | `patent-search` | IP risk, patent landscape, prior art claims |
 | `team-internal` | Internal knowledge, existing docs, in-house patterns |
+| `platform-expert` | IDE/runtime native APIs, platform hooks, SDK capabilities — avoids re-inventing what the platform already provides |
 
 ---
 

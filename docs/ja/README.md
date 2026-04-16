@@ -158,6 +158,22 @@ cp .kiro/hooks/*.kiro.hook /your-project/.kiro/hooks/
 
 **注意**: VS Code フックは `agentStop` トリガー + git diff 検知（`requirements.md` または `design.md` が変更されたか確認）を使用します。Kiro IDE フックはコマンド固有トリガー（`after_kiro_spec_requirements`、`after_kiro_spec_design`）を使用します。
 
+> **`enabled` フィールドについて**: `enabled` キーは VS Code の `.kiro.hook` 公式スキーマには存在しません。フック内のエージェントプロンプトが読み取って判断します（VS Code 本体は認識しない）。フックは常に `agentStop` で起動しますが、エージェントがフラグを確認してスキップするかどうか決定します。
+
+#### GitHub Copilot Cloud Agent（ブラウザ版）— 別スキーマ
+
+**VS Code** と **GitHub Copilot Cloud Agent**（copilot.github.com）は `.github/hooks/` を共有しますが、スキーマが非互換です：
+
+| 項目 | VS Code | GitHub Cloud Agent |
+|------|---------|-------------------|
+| `version` | 不要 | `1` 必須 |
+| イベント名のケース | PascalCase（`UserPromptSubmit`）| camelCase（`userPromptSubmitted`）|
+| スクリプトキー | `command` / `osx` / `linux` | `bash` / `powershell` |
+| タイムアウトキー | `timeout` | `timeoutSec` |
+| `agentStop` 相当 | `"Stop"` | `"sessionEnd"` |
+
+このフレームワークの `.kiro.hook` ファイルは **VS Code Copilot Chat 向け**に最適化されています。Cloud Agent ユーザーは別スキーマのフックファイルが必要です。参考: [VS Code hooks ドキュメント](https://code.visualstudio.com/docs/copilot/copilot-extensibility-overview) / [GitHub Cloud Agent hooks ドキュメント](https://docs.github.com/en/copilot/reference/hooks-configuration)。
+
 ---
 
 ## オプション：フック実行の制御
@@ -192,6 +208,7 @@ cp .kiro/hooks/*.kiro.hook /your-project/.kiro/hooks/
 | `tech-auditor` | 技術的深度・アーキテクチャ・エンジニアリングベストプラクティス |
 | `patent-search` | IP リスク・特許景観・先行技術クレーム |
 | `team-internal` | 社内ナレッジ・既存ドキュメント・社内パターン |
+| `platform-expert` | IDE・ランタイムのネイティブ API・プラットフォームフック・SDK 機能 — プラットフォームが既に持つ機能の再発明を防ぐ |
 
 ---
 
@@ -200,7 +217,7 @@ cp .kiro/hooks/*.kiro.hook /your-project/.kiro/hooks/
 ### 質問フレームワーク（Q1〜Q7）
 
 `minimal` は Q1（第一原理）+ Q6（反転リスク）のみ使用。  
-`full` は Q1〜Q7 の全質問を使用。
+`full` は Q1〜Q8 の全質問を使用。Q8 はプラットフォームネイティブ機能の調査（IDE・SDK・ランタイムが既に持つ機能の確認）。
 
 質問の内容は `.instructions.md` または `.instructions.ja.md` を直接編集して変更できる。
 
