@@ -75,60 +75,72 @@ It returns:
 
 ---
 
-## 4 Ways to Use
-
-### 1. VS Code Custom Agent — 0 min setup (recommended)
-
-> Requires: VS Code with GitHub Copilot Chat
-
-The `.github/agents/prior-art.agent.md` file in this repo is a **VS Code Custom Agent** (introduced in VS Code 1.99 / April 2025, updated schema April 2026).
-
-**In this repo** — just select the agent from the chat dropdown:
-
-1. Open Copilot Chat (`⌃⌘I`)
-2. Click the agent selector → choose **Prior Art Investigation**
-3. The agent auto-checks `git diff HEAD` and runs investigation if spec files changed
-
-**In your project** — copy the agent file:
+## Quick Install
 
 ```bash
-mkdir -p .github/agents
-cp path/to/prior-art-investigation/.github/agents/prior-art.agent.md .github/agents/
+git clone https://github.com/as-we/prior-art-investigation
+cd prior-art-investigation
+make install
 ```
 
-Select **Prior Art Investigation** from the Copilot Chat dropdown → done.
-
-> **Note**: `.chatmode.md` was the old format (deprecated). VS Code 1.99+ uses `.github/agents/*.agent.md`. If you have old `.chatmode.md` files, rename them.
+`make install` sets up both layers below. One-time, user-scoped — works across all your projects.
 
 ---
 
-### 2. VS Code Agent Skills (cross-workspace) — 2 min setup
+## How to Use
 
-Copy `.instructions.md` to your Agent Skills folder to use across **all projects**:
+### Layer 1 — Agent Skills: explicit invocation
+
+Install once → available in every project:
 
 ```bash
-# macOS
+make install-skills
+# or manually:
 cp .instructions.md \
   ~/Library/Application\ Support/Code/User/globalStorage/github.copilot-chat/agent-skills/prior-art-investigation.md
-
-# Linux
-cp .instructions.md \
-  ~/.config/Code/User/globalStorage/github.copilot-chat/agent-skills/prior-art-investigation.md
 ```
 
-Then use in Copilot Chat:
+Then call on demand in Copilot Chat:
 
 ```
-@prior-art-investigation minimal I need a real-time caching layer for our API
+@prior-art-investigation full I want to use LLM outputs to train a smaller ML model
+@prior-art-investigation minimal I need a real-time caching layer
+@prior-art-investigation selector  ← auto-routes to minimal or full
 ```
 
-→ [Full setup guide](docs/en/AGENT-SKILLS-SETUP.md)
+**Works across**: VS Code Copilot Chat, Kiro IDE, Cursor, Windsurf.
+**Token cost**: only when you explicitly call it.
+
+→ [Full VS Code setup](docs/en/AGENT-SKILLS-SETUP.md)
 
 ---
 
-### 3. Claude Desktop (MCP) — 5 min setup
+### Layer 2 — Auto-detect hook: zero-effort reminders
 
-Add to `claude_desktop_config.json`:
+A `UserPromptSubmit` hook watches your prompts and injects a one-line reminder when the message looks like a design or architecture decision — **no LLM involved, deterministic shell match**.
+
+Install once → active in every session:
+
+```bash
+make install-hook
+```
+
+Then in VS Code settings, enable user-scoped hooks:
+```json
+"chat.hookFilesLocations": { "~/.copilot/hooks": true }
+```
+
+**What it does**: when your prompt contains words like `design`, `architecture`, `requirements.md`, `/kiro-spec-design`, `設計`, `実装`, etc. — you see:
+
+> 💡 Prior art check recommended: this looks like a design or implementation decision. Before building, consider running: `@prior-art-investigation full <topic>`
+
+**Token cost**: near-zero (the hook itself runs a shell script, not an LLM).
+
+The hook lives at `~/.copilot/hooks/` — it does **not** pollute your project files.
+
+---
+
+### Layer 3 — MCP server: Claude Desktop / other clients
 
 ```json
 {
@@ -143,84 +155,57 @@ Add to `claude_desktop_config.json`:
 
 Restart Claude Desktop → 3 tools available: `load_minimal`, `load_full`, `load_selector`.
 
-→ [Full setup guide](docs/en/MCP-SETUP.md)
+→ [Full Claude setup](docs/en/MCP-SETUP.md)
 
 ---
 
-### 4. Kiro SDD — hooks & personalities
+### Layer 4 — VS Code Custom Agent (per-project)
 
-Copy directly into your project:
+The `.github/agents/prior-art.agent.md` file in this repo works as a workspace-scoped agent for VS Code Copilot Chat.
+
+**In your project** — copy the agent file:
+
+```bash
+mkdir -p .github/agents
+cp path/to/prior-art-investigation/.github/agents/prior-art.agent.md .github/agents/
+```
+
+Select **Prior Art Investigation** from the Copilot Chat dropdown when needed.
+
+> Use this layer when you want per-project control over when investigation runs, or want to share the agent config with your team via the repository.
+
+---
+
+### Layer 5 — Kiro SDD hooks (per-project, Kiro IDE)
 
 ```bash
 cp -r .kiro/hooks /your-project/.kiro/
 cp -r .kiro/personalities /your-project/.kiro/
 ```
 
-Prior art investigation runs automatically at requirements and design phases.
+Kiro IDE triggers investigation automatically at requirements and design phases (`after_kiro_spec_requirements`, `after_kiro_spec_design`).
 
-#### VS Code Copilot Chat: Hook Format & Disabling
-
-The `.kiro/hooks/` directory includes both **Kiro IDE** format (`.json` with `enabled` flag) and **VS Code** format (`.kiro.hook` with `agentStop` trigger).
-
-**VS Code setup** (copy `.kiro.hook` files, not `.json`):
-```bash
-cp .kiro/hooks/*.kiro.hook /your-project/.kiro/hooks/
-```
-
-Hooks are **disabled by default** (`"enabled": false`). To enable:
-```bash
-# Enable auto-investigation for requirements phase
-# Edit .kiro/hooks/prior-art-requirements.kiro.hook:
-# Change "enabled": false to "enabled": true
-
-# Enable auto-investigation for design phase
-# Edit .kiro/hooks/prior-art-design.kiro.hook:
-# Change "enabled": false to "enabled": true
-```
-
-> **Recommended**: Use the [VS Code Custom Agent](#1-vs-code-custom-agent--0-min-setup-recommended) approach instead.
-> Switch to the agent only when needed — no file editing required.
-
-**Note**: VS Code hooks use `agentStop` trigger + git diff detection (checks if `requirements.md` or `design.md` changed). Kiro IDE hooks use command-specific triggers (`after_kiro_spec_requirements`, `after_kiro_spec_design`).
-
-#### GitHub Copilot Cloud Agent (Browser) — Different Schema
-
-**VS Code** and **GitHub Copilot Cloud Agent** (copilot.github.com) use `.github/hooks/` but with incompatible schemas:
-
-| Item | VS Code | GitHub Cloud Agent |
-|------|---------|--------------------|
-| `version` | Not required | `1` required |
-| Event name case | PascalCase (`UserPromptSubmit`) | camelCase (`userPromptSubmitted`) |
-| Script keys | `command` / `osx` / `linux` | `bash` / `powershell` |
-| Timeout key | `timeout` | `timeoutSec` |
-| `agentStop` | `"Stop"` | `"sessionEnd"` |
-
-This framework's `.kiro.hook` files target **VS Code Copilot Chat**. Cloud Agent users need a separate hook file with the Cloud Agent schema. See [VS Code hooks docs](https://code.visualstudio.com/docs/copilot/copilot-extensibility-overview) and [GitHub Cloud Agent hooks docs](https://docs.github.com/en/copilot/reference/hooks-configuration).
+VS Code `.kiro.hook` files are included as well (disabled by default — Layer 2 is recommended instead).
 
 ---
 
 ## Optional: Control Hook Execution
 
-**Recommended approach**: Use the [VS Code Custom Agent](#1-vs-code-custom-agent--0-min-setup-recommended). Switch to the "Prior Art Investigation" agent from the chat dropdown only when investigation is needed — no file editing required.
+Layer 2 fires only when keywords match — no full investigation, just a reminder. Only use `make uninstall-hook` if you find it distracting:
 
-**Legacy hook approach** (if you prefer file-based hooks):
+```bash
+# Remove user-scope auto-detect hook
+rm ~/.copilot/hooks/prior-art-detect.json
+rm ~/.copilot/hooks/scripts/prior-art-detect.sh
+```
 
-Each prior art investigation increases token consumption. Hooks are **disabled by default** and can be enabled per-project:
+**When the full investigation adds value:**
+- Greenfield / zero-to-one — unknown territory, high discovery value
+- Architecture decisions — new subsystem, new dependency, technology selection
 
-### Enable hooks
-1. Open `.kiro/hooks/prior-art-requirements.kiro.hook`
-2. Change `"enabled": false` to `"enabled": true`
-3. Repeat for `.kiro/hooks/prior-art-design.kiro.hook`
-
-### When to enable
-- **Greenfield / zero-to-one projects** — unknown territory, high discovery value
-- **Major architecture decisions** — new subsystem design, new dependency selection
-- **Technology selection** — choosing between OSS options
-
-### When to keep disabled
-- **Maintenance / refactoring** — existing codebase, no new paradigms
-- **Well-known patterns** — already familiar with the domain
-- **Token budget constraint** — running multiple investigations in parallel
+**When to skip:**
+- Maintenance / refactoring — existing codebase, no new paradigms
+- Well-known domains — already familiar with the space
 
 ---
 
@@ -239,17 +224,7 @@ Switch investigation focus by selecting a personality:
 
 ---
 
-## Customization
-
-Extend the framework by adding your own personalities, modes, or integration hooks.
-
-See `.kiro/personalities/` and `.kiro/hooks/` for examples.
-
----
-
 ## Documentation
-
-Language-specific setup guides:
 
 | | English | 日本語 |
 |-|---------|--------|
@@ -257,6 +232,7 @@ Language-specific setup guides:
 | Claude setup | [docs/en/MCP-SETUP.md](docs/en/MCP-SETUP.md) | [docs/ja/MCP-SETUP.md](docs/ja/MCP-SETUP.md) |
 
 ---
+
 
 ## License
 

@@ -1,0 +1,13 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "osx": "~/.copilot/hooks/scripts/prior-art-detect.sh",
+        "linux": "~/.copilot/hooks/scripts/prior-art-detect.sh",
+        "windows": "powershell -File ~\\.copilot\\hooks\\scripts\\prior-art-detect.ps1",
+        "timeout": 5
+      }
+    ]
+  }
+}

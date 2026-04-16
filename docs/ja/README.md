@@ -128,9 +128,71 @@ Copilot Chat で使う：
 
 ---
 
-### C. Claude Desktop (MCP) — 5 分
+## クイックインストール
 
-`claude_desktop_config.json` に追加：
+```bash
+git clone https://github.com/as-we/prior-art-investigation
+cd prior-art-investigation
+make install
+```
+
+`make install` で以下の2層をまとめてセットアップ。**1回だけ実行すれば全プロジェクトで有効。**
+
+---
+
+## 使い方
+
+### 第1層 — Agent Skills: 明示的呼び出し
+
+一度インストールすれば全プロジェクトで使える：
+
+```bash
+make install-skills
+# または手動:
+cp .instructions.md \
+  ~/Library/Application\ Support/Code/User/globalStorage/github.copilot-chat/agent-skills/prior-art-investigation.md
+```
+
+Copilot Chat から呼び出す：
+
+```
+@prior-art-investigation full LLM の出力を使って小さい ML モデルを学習させたい
+@prior-art-investigation minimal リアルタイムキャッシュ設計について
+@prior-art-investigation selector  ← minimal か full に自動振り分け
+```
+
+**対応ツール**: VS Code Copilot Chat, Kiro IDE, Cursor, Windsurf  
+**トークン消費**: 明示的に呼んだときだけ
+
+→ [詳細セットアップ](./AGENT-SKILLS-SETUP.md)
+
+---
+
+### 第2層 — 自動検知フック: ゼロ操作リマインダー
+
+`UserPromptSubmit` フックがプロンプトを監視し、設計・アーキテクチャに関係する内容なら1行だけリマインダーを挿入する。**LLM 不使用・シェルスクリプトによる決定論的判断。**
+
+一度インストールすれば全セッションで有効：
+
+```bash
+make install-hook
+```
+
+VS Code 設定でユーザースコープフックを有効化：
+```json
+"chat.hookFilesLocations": { "~/.copilot/hooks": true }
+```
+
+**動作**: `design`, `architecture`, `requirements.md`, `/kiro-spec-design`, `設計`, `実装` などのキーワードを含むプロンプトに対して：
+
+> 💡 Prior art check recommended: this looks like a design or implementation decision. Before building, consider running: `@prior-art-investigation full <topic>`
+
+**トークン消費**: ほぼゼロ（フック自体はシェルスクリプト実行のみ）  
+フックは `~/.copilot/hooks/` に配置されるため、**プロジェクトのファイルを汚さない。**
+
+---
+
+### 第3層 — MCP サーバー: Claude Desktop / その他クライアント
 
 ```json
 {
@@ -149,75 +211,50 @@ Claude Desktop を再起動 → ツール `load_minimal` / `load_full` / `load_s
 
 ---
 
-### D. Kiro SDD — フック・パーソナリティをコピー
+### 第4層 — VS Code カスタムエージェント（プロジェクト単位）
+
+`.github/agents/prior-art.agent.md` をプロジェクトにコピーして使う：
+
+```bash
+mkdir -p .github/agents
+cp path/to/prior-art-investigation/.github/agents/prior-art.agent.md .github/agents/
+```
+
+Copilot Chat のドロップダウンから **Prior Art Investigation** を選択するだけ。
+
+> チームでエージェント設定をリポジトリ管理したい場合や、プロジェクト単位で制御したい場合に使う。
+
+---
+
+### 第5層 — Kiro SDD フック（プロジェクト単位、Kiro IDE）
 
 ```bash
 cp -r .kiro/hooks /your-project/.kiro/
 cp -r .kiro/personalities /your-project/.kiro/
 ```
 
-要件定義・設計フェーズで先行技術調査が自動的に実行される。
+Kiro IDE では要件定義・設計フェーズで自動的に先行技術調査が実行される（`after_kiro_spec_requirements`, `after_kiro_spec_design`）。
 
-#### VS Code Copilot Chat: フック形式と無効化
-
-`.kiro/hooks/` ディレクトリには **Kiro IDE** 形式（`enabled` フラグ付き JSON）と **VS Code** 形式（`agentStop` トリガー付き `.kiro.hook`）の両方が含まれてます。
-
-**VS Code セットアップ**（`.json` ではなく `.kiro.hook` をコピー）:
-```bash
-cp .kiro/hooks/*.kiro.hook /your-project/.kiro/hooks/
-```
-
-フックは**デフォルトで無効**（`"enabled": false`）です。有効化するには：
-```bash
-# 要件フックを有効化:
-# .kiro/hooks/prior-art-requirements.kiro.hook を開く
-# "enabled": false を "enabled": true に変更
-
-# 設計フックを有効化:
-# .kiro/hooks/prior-art-design.kiro.hook を開く
-# "enabled": false を "enabled": true に変更
-```
-
-> **推奨**: ファイル編集不要の [VS Code カスタムエージェント](#a-vs-code-カスタムエージェント--セットアップ不要推奨) をご利用ください。調査が必要なときだけエージェントを切り替えるだけです。
-
-#### GitHub Copilot Cloud Agent（ブラウザ版）— 別スキーマ
-
-**VS Code** と **GitHub Copilot Cloud Agent**（copilot.github.com）は `.github/hooks/` を共有しますが、スキーマが非互換です：
-
-| 項目 | VS Code | GitHub Cloud Agent |
-|------|---------|-------------------|
-| `version` | 不要 | `1` 必須 |
-| イベント名のケース | PascalCase（`UserPromptSubmit`）| camelCase（`userPromptSubmitted`）|
-| スクリプトキー | `command` / `osx` / `linux` | `bash` / `powershell` |
-| タイムアウトキー | `timeout` | `timeoutSec` |
-| `agentStop` 相当 | `"Stop"` | `"sessionEnd"` |
-
-このフレームワークの `.kiro.hook` ファイルは **VS Code Copilot Chat 向け**に最適化されています。Cloud Agent ユーザーは別スキーマのフックファイルが必要です。参考: [VS Code hooks ドキュメント](https://code.visualstudio.com/docs/copilot/copilot-extensibility-overview) / [GitHub Cloud Agent hooks ドキュメント](https://docs.github.com/en/copilot/reference/hooks-configuration)。
+VS Code 向け `.kiro.hook` も同梱（デフォルト無効 — 第2層推奨）。
 
 ---
 
 ## オプション：フック実行の制御
 
-**推奨**: [VS Code カスタムエージェント](#a-vs-code-カスタムエージェント--セットアップ不要推奨) を使ってください。調査が必要なときだけドロップダウンからエージェントを切り替えるだけで、ファイル編集は不要です。
+第2層はキーワードマッチ時にリマインダーを1行挿入するだけ（フル調査は実行しない）。無効化したい場合：
 
-**レガシーフック方式**（ファイルベースのフックを使いたい場合）：
+```bash
+rm ~/.copilot/hooks/prior-art-detect.json
+rm ~/.copilot/hooks/scripts/prior-art-detect.sh
+```
 
-先行技術調査のたびにトークン消費が増えます。フックは**デフォルトで無効**になっており、プロジェクトごとに有効化できます。
+**フル調査が有効な場面**：
+- ゼロイチ・新規開発 — 未知の領域、発見価値が高い
+- アーキテクチャ決定 — 新しいサブシステム、依存関係・技術の選定
 
-### フックを有効にする
-1. `.kiro/hooks/prior-art-requirements.kiro.hook` を開く
-2. `"enabled": false` → `"enabled": true` に変更
-3. `.kiro/hooks/prior-art-design.kiro.hook` も同様に変更
-
-### 有効にすべき場面
-- **ゼロイチ・新規開発** — 未知の領域、発見価値が高い
-- **大型アーキテクチャ決定** — 新しいサブシステム、新規依存関係の選定
-- **技術選定** — OSS オプション間の比較検討
-
-### 無効のままでよい場面
-- **保守・リファクタリング** — 既存コード、新しい概念なし
-- **既知のパターン** — すでに十分な知識がある
-- **トークン予算制約** — 複数の調査を並列実行中
+**スキップしてよい場面**：
+- 保守・リファクタリング — 既存コード、新しい概念なし
+- よく知っている領域 — 調査不要
 
 ---
 
@@ -238,7 +275,7 @@ cp .kiro/hooks/*.kiro.hook /your-project/.kiro/hooks/
 
 ## カスタマイズ
 
-### 質問フレームワーク（Q1〜Q7）
+### 質問フレームワーク（Q1〜Q8）
 
 `minimal` は Q1（第一原理）+ Q6（反転リスク）のみ使用。  
 `full` は Q1〜Q8 の全質問を使用。Q8 はプラットフォームネイティブ機能の調査（IDE・SDK・ランタイムが既に持つ機能の確認）。
@@ -265,8 +302,6 @@ cp .kiro/hooks/*.kiro.hook /your-project/.kiro/hooks/
 ---
 
 ## ドキュメント
-
-セットアップガイド（言語別）：
 
 | | 日本語 | English |
 |-|---------|--------|
