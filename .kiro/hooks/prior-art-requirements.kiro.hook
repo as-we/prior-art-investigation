@@ -1,6 +1,6 @@
 {
   "name": "Prior Art Investigation - Requirements",
-  "enabled": true,
+  "enabled": false,
   "when": { "type": "agentStop" },
   "then": {
     "type": "askAgent",

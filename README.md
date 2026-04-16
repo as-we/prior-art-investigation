@@ -75,11 +75,36 @@ It returns:
 
 ---
 
-## 3 Ways to Use
+## 4 Ways to Use
 
-### 1. VS Code Copilot — 0 min setup
+### 1. VS Code Custom Agent — 0 min setup (recommended)
 
-Copy `.instructions.md` to your Agent Skills folder:
+> Requires: VS Code with GitHub Copilot Chat
+
+The `.github/agents/prior-art.agent.md` file in this repo is a **VS Code Custom Agent** (introduced in VS Code 1.99 / April 2025, updated schema April 2026).
+
+**In this repo** — just select the agent from the chat dropdown:
+
+1. Open Copilot Chat (`⌃⌘I`)
+2. Click the agent selector → choose **Prior Art Investigation**
+3. The agent auto-checks `git diff HEAD` and runs investigation if spec files changed
+
+**In your project** — copy the agent file:
+
+```bash
+mkdir -p .github/agents
+cp path/to/prior-art-investigation/.github/agents/prior-art.agent.md .github/agents/
+```
+
+Select **Prior Art Investigation** from the Copilot Chat dropdown → done.
+
+> **Note**: `.chatmode.md` was the old format (deprecated). VS Code 1.99+ uses `.github/agents/*.agent.md`. If you have old `.chatmode.md` files, rename them.
+
+---
+
+### 2. VS Code Agent Skills (cross-workspace) — 2 min setup
+
+Copy `.instructions.md` to your Agent Skills folder to use across **all projects**:
 
 ```bash
 # macOS
@@ -101,7 +126,7 @@ Then use in Copilot Chat:
 
 ---
 
-### 2. Claude Desktop (MCP) — 5 min setup
+### 3. Claude Desktop (MCP) — 5 min setup
 
 Add to `claude_desktop_config.json`:
 
@@ -122,7 +147,7 @@ Restart Claude Desktop → 3 tools available: `load_minimal`, `load_full`, `load
 
 ---
 
-### 3. Kiro SDD — hooks & personalities
+### 4. Kiro SDD — hooks & personalities
 
 Copy directly into your project:
 
@@ -142,24 +167,19 @@ The `.kiro/hooks/` directory includes both **Kiro IDE** format (`.json` with `en
 cp .kiro/hooks/*.kiro.hook /your-project/.kiro/hooks/
 ```
 
-**To disable in VS Code** (edit `enabled` flag):
+Hooks are **disabled by default** (`"enabled": false`). To enable:
 ```bash
-# Disable requirements hook only
+# Enable auto-investigation for requirements phase
 # Edit .kiro/hooks/prior-art-requirements.kiro.hook:
-# Change "enabled": true to "enabled": false
-# 
-# The hook name will automatically change to show [DISABLED] status,
-# and a lightweight skipping prompt will be used instead
+# Change "enabled": false to "enabled": true
 
-# Disable design hook only  
+# Enable auto-investigation for design phase
 # Edit .kiro/hooks/prior-art-design.kiro.hook:
-# Change "enabled": true to "enabled": false
-
-# Re-enable
-# Change "enabled": false back to "enabled": true
+# Change "enabled": false to "enabled": true
 ```
 
-> **Note on `enabled` field**: The `enabled` key is not part of the official VS Code `.kiro.hook` schema. It is interpreted by the agent prompt inside the hook (not by VS Code itself). The hook always fires on `agentStop`; the agent reads the flag and decides whether to skip.
+> **Recommended**: Use the [VS Code Custom Agent](#1-vs-code-custom-agent--0-min-setup-recommended) approach instead.
+> Switch to the agent only when needed — no file editing required.
 
 **Note**: VS Code hooks use `agentStop` trigger + git diff detection (checks if `requirements.md` or `design.md` changed). Kiro IDE hooks use command-specific triggers (`after_kiro_spec_requirements`, `after_kiro_spec_design`).
 
@@ -181,22 +201,26 @@ This framework's `.kiro.hook` files target **VS Code Copilot Chat**. Cloud Agent
 
 ## Optional: Control Hook Execution
 
-Each prior art investigation increases token consumption. You can disable hooks for contexts where investigation is not needed:
+**Recommended approach**: Use the [VS Code Custom Agent](#1-vs-code-custom-agent--0-min-setup-recommended). Switch to the "Prior Art Investigation" agent from the chat dropdown only when investigation is needed — no file editing required.
 
-### Disable hooks
-1. Open `.kiro/hooks/prior-art-requirements.json`
-2. Change `"enabled": true` to `"enabled": false`
-3. Repeat for `.kiro/hooks/prior-art-design.json`
+**Legacy hook approach** (if you prefer file-based hooks):
 
-### When to disable
-- **Maintenance / refactoring** — existing codebase, no new paradigms
-- **Well-known patterns** — already familiar, investigation not needed
-- **Token budget constraint** — running multiple investigations in parallel
+Each prior art investigation increases token consumption. Hooks are **disabled by default** and can be enabled per-project:
 
-### When to keep enabled
+### Enable hooks
+1. Open `.kiro/hooks/prior-art-requirements.kiro.hook`
+2. Change `"enabled": false` to `"enabled": true`
+3. Repeat for `.kiro/hooks/prior-art-design.kiro.hook`
+
+### When to enable
 - **Greenfield / zero-to-one projects** — unknown territory, high discovery value
 - **Major architecture decisions** — new subsystem design, new dependency selection
 - **Technology selection** — choosing between OSS options
+
+### When to keep disabled
+- **Maintenance / refactoring** — existing codebase, no new paradigms
+- **Well-known patterns** — already familiar with the domain
+- **Token budget constraint** — running multiple investigations in parallel
 
 ---
 
