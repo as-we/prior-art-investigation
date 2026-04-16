@@ -312,8 +312,9 @@ rm ~/.copilot/hooks/scripts/prior-art-detect.sh
 
 | | 日本語 | English |
 |-|---------|--------|
-| VS Code セットアップ | [AGENT-SKILLS-SETUP.md](./AGENT-SKILLS-SETUP.md) | [docs/en/AGENT-SKILLS-SETUP.md](../en/AGENT-SKILLS-SETUP.md) |
-| Claude セットアップ | [MCP-SETUP.md](./MCP-SETUP.md) | [docs/en/MCP-SETUP.md](../en/MCP-SETUP.md) |
+| 概要 | [docs/ja/README.md](./README.md) | [docs/en/README.md](../en/README.md) |
+| セットアップガイド | [docs/ja/SETUP.md](./SETUP.md) | [docs/en/SETUP.md](../en/SETUP.md) |
+| Q1-Q8 解説 | [docs/ja/QUESTIONS.md](./QUESTIONS.md) | [docs/en/QUESTIONS.md](../en/QUESTIONS.md) |
 
 ---
 

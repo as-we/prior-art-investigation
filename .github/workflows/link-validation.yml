@@ -1,0 +1,56 @@
+name: Link Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**/*.md'
+      - 'README.md'
+      - '.github/workflows/link-validation.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'docs/**/*.md'
+      - 'README.md'
+
+jobs:
+  validate-links:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate internal markdown links
+        run: |
+          python3 - <<'EOF'
+          import re, os, sys
+
+          files = []
+          for root, dirs, fs in os.walk('docs'):
+              for f in fs:
+                  if f.endswith('.md'):
+                      files.append(os.path.join(root, f))
+          files.append('README.md')
+
+          broken = []
+          for filepath in files:
+              with open(filepath) as fh:
+                  content = fh.read()
+              links = re.findall(r'\[.*?\]\(([^)#\s]+)[^)]*\)', content)
+              for link in links:
+                  if link.startswith('http') or link.startswith('mailto'):
+                      continue
+                  base = os.path.dirname(filepath)
+                  target = os.path.normpath(os.path.join(base, link))
+                  if not os.path.exists(target):
+                      broken.append(f'{filepath}: {link} -> {target}')
+
+          if broken:
+              print('BROKEN INTERNAL LINKS:')
+              for b in broken:
+                  print(f'  {b}')
+              sys.exit(1)
+          else:
+              print(f'Checked {len(files)} files — all internal links OK')
+          EOF
