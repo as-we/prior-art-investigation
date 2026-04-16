@@ -260,16 +260,18 @@ rm ~/.copilot/hooks/scripts/prior-art-detect.sh
 
 ## パーソナリティ一覧（Kiro SDD 用）
 
-調査の観点をパーソナリティで切り替える：
+パーソナリティは「**どの観点から調査するか**」を切り替える設定で、Kiro IDE の SDD フックで使われます。フェーズによってデフォルトが異なります。
 
-| パーソナリティ | 得意な調査 |
-|--------------|-----------|
-| `researcher` | 学術論文・引用・既存研究 |
-| `startup-hunter` | 市場検証・競合分析・スタートアップ動向 |
-| `tech-auditor` | 技術的深度・アーキテクチャ・エンジニアリングベストプラクティス |
-| `patent-search` | IP リスク・特許景観・先行技術クレーム |
-| `team-internal` | 社内ナレッジ・既存ドキュメント・社内パターン |
-| `platform-expert` | IDE・ランタイムのネイティブ API・プラットフォームフック・SDK 機能 — プラットフォームが既に持つ機能の再発明を防ぐ |
+| パーソナリティ | 得意な調査 | Kiro デフォルトフェーズ |
+|--------------|-----------|----------------------|
+| `startup-hunter` | 市場検証・競合分析・スタートアップ動向 | 要件定義 |
+| `tech-auditor` | 技術的深度・アーキテクチャ・エンジニアリングBP | 設計 |
+| `researcher` | 学術論文・引用・既存研究 | — |
+| `patent-search` | IP リスク・特許景観・先行技術クレーム | — |
+| `team-internal` | 社内ナレッジ・既存ドキュメント・社内パターン | — |
+| `platform-expert` | IDE・ランタイムのネイティブ API・SDK 機能 — プラットフォームが既に持つ機能の再発明を防ぐ | — |
+
+フックの `personality` フィールドで指定します（`.kiro/hooks/*.json`）。詳細は [SETUP.md § パーソナリティの変更](./SETUP.md#パーソナリティの変更) を参照。
 
 ---
 
@@ -286,16 +288,19 @@ rm ~/.copilot/hooks/scripts/prior-art-detect.sh
 
 ### パーソナリティのカスタマイズ
 
-`.kiro/personalities/` 内の JSON ファイルを編集する：
+`.kiro/personalities/` 内の JSON ファイルを編集するか、新規作成：
 
 ```json
 {
   "name": "my-custom",
   "label": "My Custom Researcher",
   "description": "Focus on ...",
-  "questions": ["What ...?", "Are there ...?"]
+  "questions": ["What ...?", "Are there ...?"],
+  "web_sources": ["GitHub", "arXiv"]
 }
 ```
+
+→ 詳細（フック設定・環境変数・カスタム例）は [SETUP.md](./SETUP.md) を参照。
 
 ---
 

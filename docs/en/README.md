@@ -1,6 +1,6 @@
 # Prior Art Investigation Framework
 
-**[日本語](docs/ja/README.md)**
+**[日本語](../ja/README.md)**
 
 ---
 
@@ -33,7 +33,7 @@ It returns:
 ## How It Works
 
 | Mode | Use When | Output |
-|------|----------|---------|
+|------|----------|--------|
 | **minimal** | Early concept check, before design | Concept name + quick OSS list + risk flags |
 | **full** | Architecture decisions, new subsystem design | Research lineage + OSS matrix + tradeoffs + failure modes |
 | **selector** | Not sure which to use | Auto-routes to minimal or full |
@@ -43,35 +43,77 @@ It returns:
 
 **Input**: `@prior-art-investigation full I want to use LLM outputs to train a smaller ML model`
 
-**Output**:
-
 **Concept**: Knowledge Distillation
 
-> This technique has a 10+ year history. It started as a model compression method ([Hinton et al., 2015](https://arxiv.org/abs/1503.02531): "Distilling the Knowledge in a Neural Network"), evolved through [DistilBERT](https://arxiv.org/abs/1910.01108) (2019), [MiniLM](https://arxiv.org/abs/2002.10957) (2021), and exploded with LLM applications starting in 2023. The core insight: a small model can learn from a large model's outputs + reasoning, achieving 90% of performance at 10% of compute.
+> This technique has a 10+ year history. It started as a model compression method ([Hinton et al., 2015](https://arxiv.org/abs/1503.02531)), evolved through [DistilBERT](https://arxiv.org/abs/1910.01108) (2019) and [MiniLM](https://arxiv.org/abs/2002.10957) (2021), and exploded with LLM applications starting in 2023. Core insight: a small model can achieve 90% of performance at 10% of compute by learning from a large model's outputs and reasoning.
 
 **Research lineage**:
 | Year | Paper | Key Insight |
 |------|-------|------------|
-| 2015 | Hinton et al. ["Distilling the Knowledge in a Neural Network"](https://arxiv.org/abs/1503.02531) | Temperature-scaled softmax enables knowledge transfer |
-| 2019 | Sanh et al. ["DistilBERT"](https://arxiv.org/abs/1910.01108) | BERT-scale distillation is practical |
-| 2021 | Wang et al. ["MiniLM"](https://arxiv.org/abs/2002.10957) | Layer-wise intermediate matching improves small models |
-| 2023 | Li et al. ["Distilling Step-by-Step"](https://arxiv.org/abs/2212.10071) | LLM reasoning can be distilled, not just outputs |
-| 2024 | Zheng et al. ["LLaMA-Factory"](https://arxiv.org/abs/2403.13372) | Production-ready distillation pipelines |
+| 2015 | [Hinton et al.](https://arxiv.org/abs/1503.02531) | Temperature-scaled softmax enables knowledge transfer |
+| 2019 | [Sanh et al. "DistilBERT"](https://arxiv.org/abs/1910.01108) | BERT-scale distillation is practical |
+| 2023 | [Li et al. "Distilling Step-by-Step"](https://arxiv.org/abs/2212.10071) | LLM reasoning can be distilled, not just outputs |
+| 2024 | [Zheng et al. "LLaMA-Factory"](https://arxiv.org/abs/2403.13372) | Production-ready distillation pipelines |
 
 **OSS Evaluation Matrix**:
-| Tool | License | Maintainer | Updated | Data Prep | Best For | Source |
-|------|---------|-----------|---------|-----------|----------|--------|
-| Hugging Face transformers | Apache-2.0 | Hugging Face (org) | Active (weekly) | Low | Standard BERT-scale distillation | [GitHub](https://github.com/huggingface/transformers) |
-| LLaMA-Factory | Apache-2.0 | HKUST / Tsinghua (academic org) | Active (monthly) | Medium | LLM distillation end-to-end | [GitHub](https://github.com/hiyouga/LLaMA-Factory) |
-| Paper training code | Varies | Individual researchers | Stale | High | Research / custom architectures | [arXiv](https://arxiv.org/abs/2212.10071) |
+| Tool | License | Maintainer | Updated | Best For | Source |
+|------|---------|-----------|---------|----------|--------|
+| Hugging Face transformers | Apache-2.0 | Hugging Face (org) | Active (weekly) | Standard BERT-scale distillation | [GitHub](https://github.com/huggingface/transformers) |
+| LLaMA-Factory | Apache-2.0 | HKUST / Tsinghua (academic org) | Active (monthly) | LLM distillation end-to-end | [GitHub](https://github.com/hiyouga/LLaMA-Factory) |
 
 **Key Risks**:
-- **Teacher bias**: Small model inherits teacher's errors + biases
+- **Teacher bias**: Small model inherits teacher's errors and biases
 - **Data quality**: Without high-quality reasoning labels, distillation fails
 - **Instability**: Temperature tuning and loss weighting are sensitive
-- **Verify**: Always A/B test against direct training on data
 
 </details>
+
+---
+
+## How to Use
+
+### A. VS Code Custom Agent — zero setup (recommended)
+
+> Requires: VS Code + GitHub Copilot Chat
+
+This repository includes `.github/agents/prior-art.agent.md`, a **VS Code Custom Agent** file (introduced in VS Code 1.99 / April 2025, schema updated April 2026).
+
+**In this repository** — just select from the Copilot Chat dropdown:
+
+1. Open Copilot Chat (`⌃⌘I`)
+2. Agent selector → choose **Prior Art Investigation**
+3. It auto-checks `git diff HEAD` and runs investigation if spec files have changed
+
+**In your own project** — copy the agent file:
+
+```bash
+mkdir -p .github/agents
+cp path/to/prior-art-investigation/.github/agents/prior-art.agent.md .github/agents/
+```
+
+Copilot Chat dropdown → **Prior Art Investigation**, done.
+
+> **Note**: `.chatmode.md` is the old format (deprecated). VS Code 1.99+ uses `.github/agents/*.agent.md`. Rename any old `.chatmode.md` files.
+
+---
+
+### B. VS Code Agent Skills (cross-workspace) — 2 minutes
+
+**Use this when you want to call it across multiple projects.** Copy `.instructions.md` to the Agent Skills folder and restart VS Code:
+
+```bash
+# macOS
+cp .instructions.md \
+  ~/Library/Application\ Support/Code/User/globalStorage/github.copilot-chat/agent-skills/prior-art-investigation.md
+```
+
+Use in Copilot Chat:
+
+```
+@prior-art-investigation minimal I need a real-time search feature
+```
+
+→ [Full setup guide](./SETUP.md)
 
 ---
 
@@ -83,7 +125,7 @@ cd prior-art-investigation
 make install
 ```
 
-`make install` sets up both layers below. One-time, user-scoped — works across all your projects.
+`make install` sets up both layers below. **One-time install, works across all your projects.**
 
 ---
 
@@ -95,12 +137,9 @@ Install once → available in every project:
 
 ```bash
 make install-skills
-# or manually:
-cp .instructions.md \
-  ~/Library/Application\ Support/Code/User/globalStorage/github.copilot-chat/agent-skills/prior-art-investigation.md
 ```
 
-Then call on demand in Copilot Chat:
+Call from Copilot Chat:
 
 ```
 @prior-art-investigation full I want to use LLM outputs to train a smaller ML model
@@ -108,10 +147,10 @@ Then call on demand in Copilot Chat:
 @prior-art-investigation selector  ← auto-routes to minimal or full
 ```
 
-**Works across**: VS Code Copilot Chat, Kiro IDE, Cursor, Windsurf.
+**Works across**: VS Code Copilot Chat, Kiro IDE, Cursor, Windsurf.  
 **Token cost**: only when you explicitly call it.
 
-→ [Full VS Code setup](docs/en/SETUP.md)
+→ [Full setup guide](./SETUP.md)
 
 ---
 
@@ -119,24 +158,21 @@ Then call on demand in Copilot Chat:
 
 A `UserPromptSubmit` hook watches your prompts and injects a one-line reminder when the message looks like a design or architecture decision — **no LLM involved, deterministic shell match**.
 
-Install once → active in every session:
-
 ```bash
 make install-hook
 ```
 
-Then in VS Code settings, enable user-scoped hooks:
+Then in VS Code settings:
 ```json
 "chat.hookFilesLocations": { "~/.copilot/hooks": true }
 ```
 
-**What it does**: when your prompt contains words like `design`, `architecture`, `requirements.md`, `/kiro-spec-design`, `設計`, `実装`, etc. — you see:
+**What it does**: when your prompt contains words like `design`, `architecture`, `requirements.md`, `/kiro-spec-design`, `設計`, etc. — you see:
 
 > 💡 Prior art check recommended: this looks like a design or implementation decision. Before building, consider running: `@prior-art-investigation full <topic>`
 
-**Token cost**: near-zero (the hook itself runs a shell script, not an LLM).
-
-The hook lives at `~/.copilot/hooks/` — it does **not** pollute your project files.
+**Token cost**: near-zero (shell script, no LLM).  
+Hook lives at `~/.copilot/hooks/` — **does not pollute your project files**.
 
 ---
 
@@ -155,24 +191,22 @@ The hook lives at `~/.copilot/hooks/` — it does **not** pollute your project f
 
 Restart Claude Desktop → 3 tools available: `load_minimal`, `load_full`, `load_selector`.
 
-→ [Full Claude setup](docs/en/SETUP.md#c-mcp-server-claude-desktop--other-clients)
+→ [Full Claude Desktop setup](./SETUP.md#c-claude-desktop-mcp-server)
 
 ---
 
 ### Layer 4 — VS Code Custom Agent (per-project)
 
-The `.github/agents/prior-art.agent.md` file in this repo works as a workspace-scoped agent for VS Code Copilot Chat.
-
-**In your project** — copy the agent file:
+Copy the agent file into your project:
 
 ```bash
 mkdir -p .github/agents
 cp path/to/prior-art-investigation/.github/agents/prior-art.agent.md .github/agents/
 ```
 
-Select **Prior Art Investigation** from the Copilot Chat dropdown when needed.
+Select **Prior Art Investigation** from the Copilot Chat dropdown.
 
-> Use this layer when you want per-project control over when investigation runs, or want to share the agent config with your team via the repository.
+> Use this layer when you want per-project control, or want to share the agent config with your team via the repository.
 
 ---
 
@@ -191,15 +225,15 @@ VS Code `.kiro.hook` files are included as well (disabled by default — Layer 2
 
 ## Optional: Control Hook Execution
 
-Layer 2 fires only when keywords match — no full investigation, just a reminder. Only use `make uninstall-hook` if you find it distracting:
+Layer 2 fires only when keywords match — no full investigation, just a reminder.
 
 ```bash
-# Remove user-scope auto-detect hook
+# Remove auto-detect hook
 rm ~/.copilot/hooks/prior-art-detect.json
 rm ~/.copilot/hooks/scripts/prior-art-detect.sh
 ```
 
-**When the full investigation adds value:**
+**When full investigation adds value:**
 - Greenfield / zero-to-one — unknown territory, high discovery value
 - Architecture decisions — new subsystem, new dependency, technology selection
 
@@ -220,26 +254,39 @@ Personalities control **which angle to investigate from** and are used by Kiro S
 | `researcher` | Academic papers, citations, prior research | — |
 | `patent-search` | IP risk, patent landscape, prior art claims | — |
 | `team-internal` | Internal knowledge, existing docs, in-house patterns | — |
-| `platform-expert` | IDE/runtime native APIs, platform hooks, SDK capabilities — avoids re-inventing what the platform already provides | — |
+| `platform-expert` | IDE/runtime native APIs, platform hooks, SDK capabilities — avoids re-inventing what the platform provides | — |
 
-Configured via the `personality` field in `.kiro/hooks/*.json`. See [docs/en/SETUP.md § Personalities](docs/en/SETUP.md#d-kiro-ide--hooks--personalities) for details.
-
----
-
-## Documentation
-
-| | English | 日本語 |
-|-|---------|--------|
-| Overview | [docs/en/README.md](docs/en/README.md) | [docs/ja/README.md](docs/ja/README.md) |
-| Setup guide | [docs/en/SETUP.md](docs/en/SETUP.md) | [docs/ja/SETUP.md](docs/ja/SETUP.md) |
-| Q1–8 reference | [docs/en/QUESTIONS.md](docs/en/QUESTIONS.md) | [docs/ja/QUESTIONS.md](docs/ja/QUESTIONS.md) |
+Configured via the `personality` field in `.kiro/hooks/*.json`. See [SETUP.md § Personalities](./SETUP.md#d-kiro-ide--hooks--personalities) for details.
 
 ---
 
+## Customization
 
-## License
+### Question Framework (Q1–Q8)
 
-MIT
+`minimal` uses Q1 (first principles) + Q6 (inversion) only.  
+`full` uses all Q1–Q8. Q8 specifically checks platform-native capabilities (IDE, SDK, runtime).
 
-- **GitHub**: https://github.com/as-we/prior-art-investigation
-- **Release**: https://github.com/as-we/prior-art-investigation/releases/tag/v1.0.0
+Edit `.instructions.md` directly to modify question content.
+
+→ [Q1–Q8 detailed reference](./QUESTIONS.md)
+
+### Personality Customization
+
+Add a JSON file to `.kiro/personalities/`:
+
+```json
+{
+  "name": "my-custom",
+  "label": "My Custom Researcher",
+  "description": "Focus on ...",
+  "questions": ["What ...?", "Are there ...?"],
+  "web_sources": ["GitHub", "arXiv"]
+}
+```
+
+→ Full details (hook config, env var, custom examples) in [SETUP.md](./SETUP.md).
+
+---
+
+**Version**: 1.0.0 | **License**: MIT

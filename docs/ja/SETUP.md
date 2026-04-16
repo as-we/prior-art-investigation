@@ -152,6 +152,57 @@ cp -r .kiro/personalities /your-project/.kiro/
 
 要件定義（`/kiro-spec-requirements`）・設計（`/kiro-spec-design`）フェーズで自動的に先行技術調査が実行されます。
 
+### パーソナリティ一覧
+
+パーソナリティは「**どの観点から調査するか**」を切り替える設定です。フェーズによってデフォルトが異なります。
+
+| パーソナリティ | 得意な調査 | Kiro デフォルトフェーズ |
+|--------------|-----------|----------------------|
+| `startup-hunter` | 市場検証・競合分析・スタートアップ動向 | 要件定義（`/kiro-spec-requirements`） |
+| `tech-auditor` | 技術的深度・アーキテクチャ・エンジニアリングBP | 設計（`/kiro-spec-design`） |
+| `researcher` | 学術論文・引用・既存研究 | — |
+| `patent-search` | IP リスク・特許景観・先行技術クレーム | — |
+| `team-internal` | 社内ナレッジ・既存ドキュメント・社内パターン | — |
+| `platform-expert` | IDE・ランタイムのネイティブ API・SDK 機能。プラットフォームが既に持つ機能の再発明を防ぐ | — |
+
+### パーソナリティの変更
+
+**フックの設定ファイルを編集する**（`.kiro/hooks/*.json`）:
+
+```json
+// .kiro/hooks/prior-art-requirements.json
+{
+  "phase": "requirements",
+  "personality": "researcher",   // ← ここを変更
+  "trigger": "after_kiro_spec_requirements"
+}
+```
+
+**環境変数で一時的に上書き**:
+
+```bash
+PRIOR_ART_PERSONALITY=patent-search kiro spec requirements
+```
+
+### カスタムパーソナリティの作成
+
+`.kiro/personalities/` に JSON ファイルを追加するだけで使えます：
+
+```json
+// .kiro/personalities/security-auditor.json
+{
+  "name": "security-auditor",
+  "label": "Security Auditor",
+  "description": "Focus on known vulnerabilities, CVEs, and security patterns",
+  "questions": [
+    "Are there known CVEs or vulnerabilities in this approach?",
+    "What security patterns already exist for this problem?",
+    "Are there OWASP guidelines relevant here?"
+  ],
+  "web_sources": ["GitHub", "NIST NVD", "OWASP", "CVE Database"]
+}
+```
+
 ---
 
 ## E. VS Code カスタムエージェント（プロジェクト単位）
