@@ -313,7 +313,8 @@ rm ~/.copilot/hooks/scripts/prior-art-detect.sh
 | | 日本語 | English |
 |-|---------|--------|
 | 概要 | [docs/ja/README.md](./README.md) | [docs/en/README.md](../en/README.md) |
-| セットアップガイド | [docs/ja/SETUP.md](./SETUP.md) | [docs/en/SETUP.md](../en/SETUP.md) |
+| 使い方ガイド（SDD ワークフロー） | [docs/ja/USAGE.md](./USAGE.md) | [docs/en/USAGE.md](../en/USAGE.md) |
+| セットアップガイド（インストール） | [docs/ja/SETUP.md](./SETUP.md) | [docs/en/SETUP.md](../en/SETUP.md) |
 | Q1-Q8 解説 | [docs/ja/QUESTIONS.md](./QUESTIONS.md) | [docs/en/QUESTIONS.md](../en/QUESTIONS.md) |
 
 ---

@@ -231,7 +231,8 @@ Configured via the `personality` field in `.kiro/hooks/*.json`. See [docs/en/SET
 | | English | 日本語 |
 |-|---------|--------|
 | Overview | [docs/en/README.md](docs/en/README.md) | [docs/ja/README.md](docs/ja/README.md) |
-| Setup guide | [docs/en/SETUP.md](docs/en/SETUP.md) | [docs/ja/SETUP.md](docs/ja/SETUP.md) |
+| Usage guide (SDD workflow) | [docs/en/USAGE.md](docs/en/USAGE.md) | [docs/ja/USAGE.md](docs/ja/USAGE.md) |
+| Setup guide (installation) | [docs/en/SETUP.md](docs/en/SETUP.md) | [docs/ja/SETUP.md](docs/ja/SETUP.md) |
 | Q1–8 reference | [docs/en/QUESTIONS.md](docs/en/QUESTIONS.md) | [docs/ja/QUESTIONS.md](docs/ja/QUESTIONS.md) |
 
 ---

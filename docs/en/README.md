@@ -270,7 +270,7 @@ Configured via the `personality` field in `.kiro/hooks/*.json`. See [SETUP.md §
 Edit `.instructions.md` directly to modify question content.
 
 → [Q1–Q8 detailed reference](./QUESTIONS.md)
-
+→ [Usage guide — VS Code / Kiro / Claude workflow](./USAGE.md)
 ### Personality Customization
 
 Add a JSON file to `.kiro/personalities/`:
