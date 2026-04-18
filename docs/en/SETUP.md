@@ -2,6 +2,8 @@
 
 Choose the integration that fits your toolchain.
 
+**Jump to**: [A. VS Code Agent Skills](#a-vs-code-copilot-chat--agent-skills) | [B. Auto-detect Hook](#b-auto-detect-hook-vs-code--userpromptsubmit) | [C. Claude Desktop](#c-claude-desktop-mcp-server) | [D. Kiro IDE](#d-kiro-ide--hooks--personalities) | [E. VS Code Custom Agent](#e-vs-code-custom-agent-per-project)
+
 ---
 
 ## Quick Start (Recommended)

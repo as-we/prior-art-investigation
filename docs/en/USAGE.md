@@ -2,6 +2,8 @@
 
 Before designing, confirm: "This concept already has a name", "There's existing OSS for this", "The failure patterns are documented."
 
+> Not installed yet? See [Setup Guide](./SETUP.md) first.
+
 ---
 
 ## Which tool are you using?
@@ -12,6 +14,8 @@ Before designing, confirm: "This concept already has a name", "There's existing 
 | **Kiro IDE** | Auto-fires at SDD phases | Agent dropdown selection | [→ B](#b-kiro-ide) |
 | **Claude Desktop** | None | MCP tool calls | [→ C](#c-claude-desktop) |
 
+**Reading the output**: [Reading the output](#reading-the-output) (Q1–Q8 meaning) | [When to skip](#when-to-skip)
+
 > **About investigation modes**  
 > `MINIMAL` (Q1+Q6): Requirements phase. "Are we solving the right problem?" and "What could fail?" — 5–10 min.  
 > `FULL` (Q1–Q8): Design phase. Concept name, OSS comparison matrix, architecture recommendation, platform-native capabilities — 20–40 min.
@@ -20,24 +24,7 @@ Before designing, confirm: "This concept already has a name", "There's existing 
 
 ## A. VS Code + GitHub Copilot
 
-### Install (once)
-
-```bash
-git clone https://github.com/as-we/prior-art-investigation
-cd prior-art-investigation
-make install
-```
-
-This sets up two things:
-- **Agent Skills** — use `/prior-art` slash command from any project in Copilot Chat
-- **UserPromptSubmit hook** — auto-insert a one-line reminder for design-related prompts
-
-Enable hooks in VS Code settings:
-```json
-"chat.hookFilesLocations": { "~/.copilot/hooks": true }
-```
-
----
+> Assuming already installed. Not installed yet? → [SETUP.md](./SETUP.md)
 
 ### Auto 1 — Prompt monitoring reminder (always on after install)
 
@@ -113,19 +100,7 @@ Type in Copilot Chat as a slash command. **Add `#web` to fetch live OSS data bey
 
 ## B. Kiro IDE
 
-### Install (once per project)
-
-```bash
-# Copy hooks and personalities
-cp -r path/to/prior-art-investigation/.kiro/hooks /your-project/.kiro/
-cp -r path/to/prior-art-investigation/.kiro/personalities /your-project/.kiro/
-
-# Copy agent (for manual use)
-mkdir -p .github/agents
-cp path/to/prior-art-investigation/.github/agents/prior-art.agent.md .github/agents/
-```
-
----
+> Assuming already installed. Not installed yet? → [SETUP.md](./SETUP.md#d-kiro-ide--hooks--personalities)
 
 ### Auto — SDD phase integration
 
