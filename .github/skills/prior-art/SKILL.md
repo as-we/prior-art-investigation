@@ -1,14 +1,14 @@
 ---
 name: prior-art
-description: Prior Art Investigation — Identify concept names, existing OSS, and failure risks before building. Use when designing new features, selecting technologies, or evaluating architecture patterns. Invoke with /prior-art minimal (quick check) or /prior-art full (deep investigation).
-argument-hint: "[minimal | full | selector] <topic>"
+description: Prior Art Investigation — Identify concept names, existing OSS, and failure risks before building. Use when designing new features, selecting technologies, or evaluating architecture patterns. Invoke with /prior-art minimal (quick check) or /prior-art full (deep investigation). Add #web for real-time OSS data beyond training cutoff.
+argument-hint: "[minimal | full | selector] <topic> [#web]"
 ---
 
 # Prior Art Investigation
 
 Quickly identify if your feature concept already exists, what it's called, and what OSS solutions are available — **before** you code.
 
-> ⚠️ **Training cutoff notice**: This agent uses an LLM whose knowledge has a cutoff date. Output may not reflect developments from the past 6–12 months. Always cross-check with official documentation and GitHub Releases for the latest status.
+> 💡 **Recommended**: Add `#web` to your prompt so this agent can search the live web for current OSS releases, recent GitHub activity, and platform changelog entries — bypassing LLM training cutoff entirely.
 
 ## What This Agent Does
 
@@ -35,6 +35,22 @@ Quickly identify if your feature concept already exists, what it's called, and w
 | `/prior-art minimal` | Q1 + Q6 only — concept name, OSS list, risk flags |
 | `/prior-art full` | Q1–Q8 complete — research lineage, OSS matrix, tradeoffs, failure modes |
 
+**Add `#web` for live results** (VS Code Copilot Chat):
+```
+/prior-art full #web LLM knowledge distillation
+```
+
+## Web Search
+
+This agent is designed to be used **with web search enabled**. Prior art investigation is about "what exists right now" — LLM training data alone is insufficient.
+
+| Tool | How to enable web search |
+|------|--------------------------|
+| VS Code Copilot Chat | Add `#web` to your prompt |
+| VS Code agent mode | Agent calls web search automatically when instructed |
+| Kiro IDE | Web search tool available if granted in agent permissions |
+| Claude Desktop | Add a search MCP server (Brave Search, Tavily, or Exa) — see USAGE.md |
+
 ## MINIMAL Investigation (Q1 + Q6)
 
 ### Q1: First Principles
@@ -54,11 +70,11 @@ Run all questions in sequence:
 **Q1** First Principles — Is the problem correctly defined?
 **Q2** Concept Name — What is this called in existing research? What is the research lineage?
 **Q3** Technical Options — What algorithms/architecture patterns exist? What are the tradeoffs?
-**Q4** OSS Ecosystem — What existing OSS already solves this? Evaluate: license, maintainer, update frequency, best-fit use cases. Include source links.
+**Q4** OSS Ecosystem — **Use web search here.** What existing OSS already solves this? Check GitHub for latest release dates and activity. Evaluate: license, maintainer, update frequency, best-fit use cases. Include source links.
 **Q5** Architecture Choice — Build vs. Adopt recommendation and rationale.
 **Q6** Inversion — Failure scenarios and assumptions to validate.
 **Q7** Next Steps — Prioritized concrete actions.
-**Q8** Platform Native — Does the target platform (VS Code, GitHub, Azure, AWS, etc.) already provide this natively? Check official docs and recent Changelog.
+**Q8** Platform Native — **Use web search here.** Does the target platform (VS Code, GitHub, Azure, AWS, etc.) already provide this natively? Search the official Changelog and recent release notes for the latest status.
 
 ## Output Rules
 
@@ -67,7 +83,7 @@ Every output must include:
 - ✅ OSS evaluation matrix with columns: Tool | License | Maintainer | Updated | Best For | Source
 - ✅ Source links (arXiv / GitHub / official docs) for every claim — facts without sources are not accepted
 - ✅ Risk map (assumptions → potential failures)
-- ✅ Manual verification checklist for items that may postdate the LLM training cutoff
+- ✅ If web search was NOT used: flag any OSS/platform items that may have changed in the past 12 months and recommend the user verify with `#web`
 
 ## Integration with Kiro SDD
 

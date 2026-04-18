@@ -94,15 +94,15 @@ rm ~/.copilot/hooks/prior-art-detect.json ~/.copilot/hooks/scripts/prior-art-det
 
 ### Manual
 
-Type in Copilot Chat as a slash command:
+Type in Copilot Chat as a slash command. **Add `#web` to fetch live OSS data beyond training cutoff:**
 
 ```
-/prior-art minimal  I need to design API rate limiting
-/prior-art full     I want to design a knowledge distillation architecture using LLMs
-/prior-art selector ← auto-routes to MINIMAL or FULL
+/prior-art full #web I need to design API rate limiting
+/prior-art minimal #web I'm evaluating caching strategies
+/prior-art selector #web ← auto-routes to MINIMAL or FULL
 ```
 
-Works even when no spec files have changed — just describe the topic.
+`#web` activates Bing search — Copilot fetches GitHub Releases, official changelogs, and recent activity in real time. Works even when no spec files have changed — just describe the topic.
 
 **When to use manually**:
 - Investigation independent of SDD phase timing
@@ -207,6 +207,39 @@ Restart Claude Desktop.
 
 ---
 
+### Enable web search (recommended)
+
+Prior art investigation requires current data. Add a search MCP server alongside `prior-art`:
+
+**Option A — Brave Search** (free tier available):
+```json
+{
+  "mcpServers": {
+    "prior-art": { "command": "python3", "args": ["/path/to/prior-art-investigation/mcp/server_lite.py"] },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": { "BRAVE_API_KEY": "<your-key>" }
+    }
+  }
+}
+```
+Get a free API key at [brave.com/search/api](https://brave.com/search/api/).
+
+**Option B — Tavily** (AI-optimized search):
+```json
+"tavily-search": {
+  "command": "npx",
+  "args": ["-y", "tavily-mcp"],
+  "env": { "TAVILY_API_KEY": "<your-key>" }
+}
+```
+Get a key at [app.tavily.com](https://app.tavily.com/).
+
+Once a search server is active, Claude will automatically call it when `load_full` or `load_minimal` runs Q4 (OSS Ecosystem) and Q8 (Platform Native).
+
+---
+
 ### Automatic execution
 
 Claude Desktop has no SDD phase integration — no automatic triggers. Use manual calls below.
@@ -247,7 +280,7 @@ In addition to Q1 and Q6:
 - **Q7**: Prioritized next actions
 - **Q8**: Platform-native capabilities check (VS Code, GitHub, Azure, AWS, etc.) — prevents re-inventing what the platform already provides
 
-> ⚠️ **LLM training cutoff**: LLM knowledge has a cutoff date and may not reflect developments from the past 6–12 months. Always cross-check the “manual verification checklist” at the end of any output against official documentation and GitHub Releases.
+> 💡 **For the most accurate results**, always run with web search enabled (`#web` in VS Code, search MCP in Claude Desktop). OSS release status and platform-native features change frequently.
 
 → [Q1–Q8 detailed reference](./QUESTIONS.md)
 

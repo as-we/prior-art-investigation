@@ -94,15 +94,15 @@ rm ~/.copilot/hooks/prior-art-detect.json ~/.copilot/hooks/scripts/prior-art-det
 
 ### 手動実行
 
-Copilot Chat にスラッシュコマンドで入力：
+Copilot Chat にスラッシュコマンドで入力。**`#web` を付けるとライブ検索で学習カットオフを突破できます**：
 
 ```
-/prior-art minimal  API のレート制限を設計したい
-/prior-art full     LLM を使った知識蒸留アーキテクチャを設計したい
-/prior-art selector ← MINIMAL / FULL を自動判定
+/prior-art full #web  API のレート制限を設計したい
+/prior-art minimal #web  キャッシュ戦略を検討している
+/prior-art selector #web  ← MINIMAL / FULL を自動判定
 ```
 
-**spec ファイル未変更の場合**も、調査トピックを添えて実行できます。
+`#web` を付けると Copilot が Bing 検索を呼び出し、GitHub Releases ・公式 Changelog ・最新アクティビティをリアルタイムで取得します。spec ファイル未変更の場合も、調査トピックを入力すれば実行できます。
 
 **いつ使う**:
 - 自動実行のタイミングと関係なく調査したいとき
@@ -207,6 +207,39 @@ Claude Desktop を再起動。
 
 ---
 
+### Web 検索の有効化（推奨）
+
+先行技術調査は「今現在何が存在するか」が本質なので、Web 検索の併用を強く推奨します。`prior-art` の横に検索 MCP サーバーを追加してください。
+
+**選択肢 A — Brave Search**（無料枠あり）：
+```json
+{
+  "mcpServers": {
+    "prior-art": { "command": "python3", "args": ["/path/to/prior-art-investigation/mcp/server_lite.py"] },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": { "BRAVE_API_KEY": "<アピーキー>" }
+    }
+  }
+}
+```
+無料 API キー: [brave.com/search/api](https://brave.com/search/api/)
+
+**選択肢 B — Tavily**（AI 最適化検索）：
+```json
+"tavily-search": {
+  "command": "npx",
+  "args": ["-y", "tavily-mcp"],
+  "env": { "TAVILY_API_KEY": "<アピーキー>" }
+}
+```
+API キー取得: [app.tavily.com](https://app.tavily.com/)
+
+検索サーバーが有効化されると、`load_full` / `load_minimal` の Q4（OSS エコシステム）・ Q8（プラットフォームネイティブ機能）で Claude が自動的に検索を呼び出します。
+
+---
+
 ### 自動実行について
 
 Claude Desktop には SDD フェーズとの自動連動機能はありません。手動でツールを呼び出してください。
@@ -247,7 +280,7 @@ Q1・Q6 に加えて:
 - **Q7**: 優先度付きの次のアクション
 - **Q8**: ターゲットプラットフォームのネイティブ機能確認（再発明の防止）
 
-> ⚠️ **注意 — LLM 学習カットオフ**: LLM の学習カットオフ以降の情報は含まれません。出力末尾の「手動確認チェックリスト」で公式ドキュメントの最新情報（GitHub Releases・Changelog）を必ず補完してください。過去6〜12ヶ月の更新は特に要注意です。
+> 💡 **最高精度で調査するには** Web 検索を有効にしてください（VS Code: `#web`、Claude Desktop: 検索 MCP）。OSS のリリース状況やプラットフォームのネイティブ機能は頻繁に更新されます。
 
 → [Q1〜Q8 詳細解説](./QUESTIONS.md)
 
