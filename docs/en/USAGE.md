@@ -45,7 +45,7 @@ When your prompt contains keywords like "design", "architecture", "implement", e
 
 > 💡 Prior art check recommended: this looks like a design or implementation decision. Before building, consider running: `/prior-art full <topic>`
 
-**How it works**: deterministic shell script, no LLM, zero token cost.
+**How it works**: whether to insert the reminder is decided by a deterministic shell script, not an LLM — so the hook itself never generates a premium request.
 
 ---
 

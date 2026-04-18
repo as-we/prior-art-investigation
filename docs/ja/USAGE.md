@@ -32,7 +32,7 @@
 
 > 💡 Prior art check recommended: this looks like a design or implementation decision. Before building, consider running: `/prior-art full <topic>`
 
-**特徴**: LLM 不使用・シェルスクリプトによる判定。フック自体は premium request を消費しない。
+**判定方法**: リマインダーを挿入するかの判定は LLM ではなくシェルスクリプトが行う。そのためフック自体は premium request を発生しない。
 
 ---
 

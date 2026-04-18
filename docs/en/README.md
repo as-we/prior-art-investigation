@@ -171,7 +171,7 @@ Then in VS Code settings:
 
 > 💡 Prior art check recommended: this looks like a design or implementation decision. Before building, consider running: `/prior-art full <topic>`
 
-**Token cost**: The hook itself consumes **0 premium requests** (shell script only). When a keyword matches, a ~50-token reminder is appended to your next prompt's input — no additional LLM response is generated. Running `/prior-art full` costs the same as a normal chat message.  
+**Token cost**: whether to insert the reminder is decided by a shell script, not an LLM, so the hook itself never generates a premium request. When a keyword matches, a ~50-token reminder is appended to your next prompt's input — no additional LLM response is generated. Running `/prior-art full` costs the same as a normal chat message.  
 Hook lives at `~/.copilot/hooks/` — **does not pollute your project files**.
 
 ---
