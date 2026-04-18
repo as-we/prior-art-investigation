@@ -187,7 +187,7 @@ VS Code 設定でユーザースコープフックを有効化：
 
 > 💡 Prior art check recommended: this looks like a design or implementation decision. Before building, consider running: `/prior-art full <topic>`
 
-**トークン消費**: ほぼゼロ（フック自体はシェルスクリプト実行のみ）  
+**トークン消費**: フック自体は premium request を消費しない（シェルスクリプトのみ）。キーワードにマッチした場合のみリマインダー文（約50トークン）が入力に追加されるが、追加の LLM 応答は発生しない。`/prior-art` を実際に実行したときは通常のチャットと同じく premium request を消費する。  
 フックは `~/.copilot/hooks/` に配置されるため、**プロジェクトのファイルを汚さない。**
 
 ---

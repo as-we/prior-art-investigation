@@ -134,7 +134,7 @@ Then in VS Code settings, enable user-scoped hooks:
 
 > 💡 Prior art check recommended: this looks like a design or implementation decision. Before building, consider running: `/prior-art full <topic>`
 
-**Token cost**: near-zero (the hook itself runs a shell script, not an LLM).
+**Token cost**: The hook itself consumes **0 premium requests** (shell script only). When a keyword matches, a ~50-token reminder is appended to your next prompt's input — no additional LLM response is generated. Running `/prior-art full` costs the same as a normal chat message.
 
 The hook lives at `~/.copilot/hooks/` — it does **not** pollute your project files.
 
