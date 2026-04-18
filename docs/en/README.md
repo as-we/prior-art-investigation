@@ -18,7 +18,7 @@ A well-established research field called "Knowledge Distillation" already exists
 **This framework eliminates that blind spot before you start designing.**
 
 ```
-@prior-art full I want to use LLM outputs to train a smaller ML model
+/prior-art full I want to use LLM outputs to train a smaller ML model
 ```
 
 It returns:
@@ -41,7 +41,7 @@ It returns:
 <details>
 <summary><strong>Example: Full investigation output</strong></summary>
 
-**Input**: `@prior-art full I want to use LLM outputs to train a smaller ML model`
+**Input**: `/prior-art full I want to use LLM outputs to train a smaller ML model`
 
 **Concept**: Knowledge Distillation
 
@@ -110,7 +110,7 @@ cp .instructions.md \
 Use in Copilot Chat:
 
 ```
-@prior-art minimal I need a real-time search feature
+/prior-art minimal I need a real-time search feature
 ```
 
 → [Full setup guide](./SETUP.md)
@@ -142,9 +142,9 @@ make install-skills
 Call from Copilot Chat:
 
 ```
-@prior-art full I want to use LLM outputs to train a smaller ML model
-@prior-art minimal I need a real-time caching layer
-@prior-art selector  ← auto-routes to minimal or full
+/prior-art full I want to use LLM outputs to train a smaller ML model
+/prior-art minimal I need a real-time caching layer
+/prior-art selector  ← auto-routes to minimal or full
 ```
 
 **Works across**: VS Code Copilot Chat, Kiro IDE, Cursor, Windsurf.  
@@ -169,7 +169,7 @@ Then in VS Code settings:
 
 **What it does**: when your prompt contains words like `design`, `architecture`, `requirements.md`, `/kiro-spec-design`, `設計`, etc. — you see:
 
-> 💡 Prior art check recommended: this looks like a design or implementation decision. Before building, consider running: `@prior-art full <topic>`
+> 💡 Prior art check recommended: this looks like a design or implementation decision. Before building, consider running: `/prior-art full <topic>`
 
 **Token cost**: near-zero (shell script, no LLM).  
 Hook lives at `~/.copilot/hooks/` — **does not pollute your project files**.

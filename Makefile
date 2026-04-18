@@ -1,11 +1,6 @@
 .PHONY: install install-skills install-hook uninstall validate help
 
-UNAME := $(shell uname)
-ifeq ($(UNAME), Darwin)
-  SKILLS_DIR := $(HOME)/Library/Application\ Support/Code/User/globalStorage/github.copilot-chat/agent-skills
-else
-  SKILLS_DIR := $(HOME)/.config/Code/User/globalStorage/github.copilot-chat/agent-skills
-endif
+SKILLS_DIR := $(HOME)/.copilot/skills/prior-art
 HOOKS_DIR := $(HOME)/.copilot/hooks
 
 # ─── Layer 1: Agent Skills (cross-workspace, explicit invocation) ───────────
@@ -13,8 +8,8 @@ HOOKS_DIR := $(HOME)/.copilot/hooks
 install-skills:
 	@echo "Installing Agent Skills..."
 	@mkdir -p "$(SKILLS_DIR)"
-	@cp .instructions.md "$(SKILLS_DIR)/prior-art.md"
-	@echo "✓ Agent Skills installed → @prior-art minimal/full/selector"
+	@cp .github/skills/prior-art/SKILL.md "$(SKILLS_DIR)/SKILL.md"
+	@echo "✓ Agent Skills installed → /prior-art minimal/full/selector"
 
 # ─── Layer 2: UserPromptSubmit hook (user-scope, deterministic) ─────────────
 
@@ -35,13 +30,13 @@ install: install-skills install-hook
 	@echo ""
 	@echo "✅ Prior Art Investigation installed (2-layer setup)"
 	@echo ""
-	@echo "  Layer 1 — Agent Skills: @prior-art full <topic>"
+	@echo "  Layer 1 — Agent Skills: /prior-art full <topic>"
 	@echo "  Layer 2 — Auto hook:    fires on design/spec prompts"
 
 # ─── Uninstall ───────────────────────────────────────────────────────────────
 
 uninstall:
-	@rm -f "$(SKILLS_DIR)/prior-art.md"
+	@rm -f "$(SKILLS_DIR)/SKILL.md"
 	@rm -f "$(HOOKS_DIR)/prior-art-detect.json"
 	@rm -f "$(HOOKS_DIR)/scripts/prior-art-detect.sh"
 	@rm -f "$(HOOKS_DIR)/scripts/prior-art-detect.ps1"
@@ -69,7 +64,7 @@ help:
 	@echo "  make install          - Install Agent Skills + UserPromptSubmit hook"
 	@echo ""
 	@echo "Install individually:"
-	@echo "  make install-skills   - Layer 1: Agent Skills (@prior-art)"
+	@echo "  make install-skills   - Layer 1: Agent Skills (/prior-art)"
 	@echo "  make install-hook     - Layer 2: Auto-detect hook (user-scope)"
 	@echo ""
 	@echo "Other:"

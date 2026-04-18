@@ -27,34 +27,26 @@ make install-skills
 Or manually:
 
 ```bash
-# macOS
-cp .instructions.md \
-  ~/Library/Application\ Support/Code/User/globalStorage/github.copilot-chat/agent-skills/prior-art.md
-
-# Linux
-cp .instructions.md \
-  ~/.config/Code/User/globalStorage/github.copilot-chat/agent-skills/prior-art.md
-
-# Windows (PowerShell)
-$dir = "$env:APPDATA\Code\User\globalStorage\github.copilot-chat\agent-skills"
-New-Item -ItemType Directory -Force -Path $dir | Out-Null
-Copy-Item ".instructions.md" "$dir\prior-art.md"
+# All platforms
+mkdir -p ~/.copilot/skills/prior-art
+cp .github/skills/prior-art/SKILL.md ~/.copilot/skills/prior-art/SKILL.md
 ```
 
 Restart VS Code to apply.
 
 ### Usage
 
+Type in Copilot Chat as a slash command:
+
 ```
-@prior-art minimal  I need to implement an API rate limiter
-@prior-art full     I want to design a distributed caching layer
-@prior-art selector ← auto-routes to minimal or full
+/prior-art minimal  I need to implement an API rate limiter
+/prior-art full     I want to design a distributed caching layer
+/prior-art selector ← auto-routes to minimal or full
 ```
 
-> **Why `.instructions.md` (English) is recommended**  
-> Agent Skills are sent directly as LLM prompts. English costs 20–30% fewer tokens for the same content, and GPT/Claude both produce more accurate research results from English prompts. If you need responses in Japanese, append `(respond in Japanese)` to your call:  
+> **Need Japanese responses?** Append the language instruction:
 > ```
-> @prior-art full knowledge distillation design (respond in Japanese)
+> /prior-art full knowledge distillation design (respond in Japanese)
 > ```
 
 ### Troubleshooting

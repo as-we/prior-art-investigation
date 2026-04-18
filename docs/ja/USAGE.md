@@ -8,8 +8,8 @@
 
 | ツール | 自動実行 | 手動実行 | セクション |
 |--------|---------|---------|-----------|
-| **VS Code + GitHub Copilot** | リマインダー通知（opt-in で実調査） | `@prior-art` エージェント | [→ A](#a-vs-code--github-copilot) |
-| **Kiro IDE** | SDD フェーズで自動発火 | `@prior-art` エージェント | [→ B](#b-kiro-ide) |
+| **VS Code + GitHub Copilot** | リマインダー通知（opt-in で実調査） | `/prior-art` スラッシュコマンド | [→ A](#a-vs-code--github-copilot) |
+| **Kiro IDE** | SDD フェーズで自動発火 | エージェントドロップダウン選択 | [→ B](#b-kiro-ide) |
 | **Claude Desktop** | なし | MCP ツール呼び出し | [→ C](#c-claude-desktop) |
 
 > **調査モードについて**  
@@ -29,7 +29,7 @@ make install
 ```
 
 これだけで以下の2つがセットアップされます：
-- **Agent Skills** — `@prior-art` を任意のプロジェクトで呼び出せる
+- **Agent Skills** — Copilot Chat で `/prior-art` スラッシュコマンドを任意のプロジェクトで呼び出せる
 - **UserPromptSubmit フック** — 設計・アーキテクチャに関係するプロンプトに自動でリマインダーを挿入
 
 VS Code 設定にフックを有効化：
@@ -43,7 +43,7 @@ VS Code 設定にフックを有効化：
 
 「設計」「アーキテクチャ」「実装したい」などのキーワードを含むプロンプトを送ると、自動で1行挿入されます：
 
-> 💡 Prior art check recommended: this looks like a design or implementation decision. Before building, consider running: `@prior-art full <topic>`
+> 💡 Prior art check recommended: this looks like a design or implementation decision. Before building, consider running: `/prior-art full <topic>`
 
 **特徴**: LLM 不使用・シェルスクリプトによる判定。トークン消費なし。
 
@@ -94,15 +94,15 @@ rm ~/.copilot/hooks/prior-art-detect.json ~/.copilot/hooks/scripts/prior-art-det
 
 ### 手動実行
 
-Copilot Chat のエージェントセレクター（`@` メニュー）から **prior-art** を選択：
+Copilot Chat にスラッシュコマンドで入力：
 
 ```
-@prior-art minimal  API のレート制限を設計したい
-@prior-art full     LLM を使った知識蒸留アーキテクチャを設計したい
-@prior-art selector ← MINIMAL / FULL を自動判定
+/prior-art minimal  API のレート制限を設計したい
+/prior-art full     LLM を使った知識蒸留アーキテクチャを設計したい
+/prior-art selector ← MINIMAL / FULL を自動判定
 ```
 
-**spec ファイル未変更の場合**も、チャットに調査トピックを書けば実行できます。
+**spec ファイル未変更の場合**も、調査トピックを添えて実行できます。
 
 **いつ使う**:
 - 自動実行のタイミングと関係なく調査したいとき
@@ -174,13 +174,15 @@ jq '.enabled = true' .kiro/hooks/prior-art-design.kiro.hook > /tmp/h.tmp \
 
 ### 手動実行
 
-Kiro のエージェントセレクターから **prior-art** を選択：
+Kiro のエージェントドロップダウン（チャット上部）から **Prior Art Investigation** を選んで、調査トピックを入力：
 
 ```
-@prior-art minimal  新しいキャッシュ戦略を検討している
-@prior-art full     分散トレーシングのアーキテクチャを設計したい
-@prior-art selector ← MINIMAL / FULL を自動判定
+minimal  新しいキャッシュ戦略を検討している
+full     分散トレーシングのアーキテクチャを設計したい
+selector ← MINIMAL / FULL を自動判定
 ```
+
+または Kiro で Agent Skills が利用可能な場合は `/prior-art` スラッシュコマンドも使えます。
 
 ---
 
@@ -245,7 +247,7 @@ Q1・Q6 に加えて:
 - **Q7**: 優先度付きの次のアクション
 - **Q8**: ターゲットプラットフォームのネイティブ機能確認（再発明の防止）
 
-> **注意**: LLM の学習カットオフ以降の情報は含まれません。出力末尾の「手動確認チェックリスト」で公式ドキュメントの最新情報を補完してください。
+> ⚠️ **注意 — LLM 学習カットオフ**: LLM の学習カットオフ以降の情報は含まれません。出力末尾の「手動確認チェックリスト」で公式ドキュメントの最新情報（GitHub Releases・Changelog）を必ず補完してください。過去6〜12ヶ月の更新は特に要注意です。
 
 → [Q1〜Q8 詳細解説](./QUESTIONS.md)
 

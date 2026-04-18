@@ -8,8 +8,8 @@ Before designing, confirm: "This concept already has a name", "There's existing 
 
 | Tool | Automatic | Manual | Section |
 |------|-----------|--------|---------|
-| **VS Code + GitHub Copilot** | Reminder notification (opt-in for actual investigation) | `@prior-art` agent | [→ A](#a-vs-code--github-copilot) |
-| **Kiro IDE** | Auto-fires at SDD phases | `@prior-art` agent | [→ B](#b-kiro-ide) |
+| **VS Code + GitHub Copilot** | Reminder notification (opt-in for actual investigation) | `/prior-art` slash command | [→ A](#a-vs-code--github-copilot) |
+| **Kiro IDE** | Auto-fires at SDD phases | Agent dropdown selection | [→ B](#b-kiro-ide) |
 | **Claude Desktop** | None | MCP tool calls | [→ C](#c-claude-desktop) |
 
 > **About investigation modes**  
@@ -29,7 +29,7 @@ make install
 ```
 
 This sets up two things:
-- **Agent Skills** — call `@prior-art` from any project
+- **Agent Skills** — use `/prior-art` slash command from any project in Copilot Chat
 - **UserPromptSubmit hook** — auto-insert a one-line reminder for design-related prompts
 
 Enable hooks in VS Code settings:
@@ -43,7 +43,7 @@ Enable hooks in VS Code settings:
 
 When your prompt contains keywords like "design", "architecture", "implement", etc., a reminder is automatically inserted:
 
-> 💡 Prior art check recommended: this looks like a design or implementation decision. Before building, consider running: `@prior-art full <topic>`
+> 💡 Prior art check recommended: this looks like a design or implementation decision. Before building, consider running: `/prior-art full <topic>`
 
 **How it works**: deterministic shell script, no LLM, zero token cost.
 
@@ -94,15 +94,15 @@ rm ~/.copilot/hooks/prior-art-detect.json ~/.copilot/hooks/scripts/prior-art-det
 
 ### Manual
 
-Select **prior-art** from the Copilot Chat agent selector (`@` menu):
+Type in Copilot Chat as a slash command:
 
 ```
-@prior-art minimal  I need to design API rate limiting
-@prior-art full     I want to design a knowledge distillation architecture using LLMs
-@prior-art selector ← auto-routes to MINIMAL or FULL
+/prior-art minimal  I need to design API rate limiting
+/prior-art full     I want to design a knowledge distillation architecture using LLMs
+/prior-art selector ← auto-routes to MINIMAL or FULL
 ```
 
-Works even when no spec files have changed — just describe the topic in chat.
+Works even when no spec files have changed — just describe the topic.
 
 **When to use manually**:
 - Investigation independent of SDD phase timing
@@ -174,13 +174,15 @@ jq '.enabled = true' .kiro/hooks/prior-art-design.kiro.hook > /tmp/h.tmp \
 
 ### Manual
 
-Select **prior-art** from the Kiro agent selector:
+Select **Prior Art Investigation** from the Kiro agent dropdown (top of chat), then type the topic:
 
 ```
-@prior-art minimal  evaluating a new caching strategy
-@prior-art full     designing a distributed tracing architecture
-@prior-art selector ← auto-routes to MINIMAL or FULL
+minimal  evaluating a new caching strategy
+full     designing a distributed tracing architecture
+selector ← auto-routes to MINIMAL or FULL
 ```
+
+If Kiro supports Agent Skills, you can also use `/prior-art` as a slash command.
 
 ---
 
@@ -245,7 +247,7 @@ In addition to Q1 and Q6:
 - **Q7**: Prioritized next actions
 - **Q8**: Platform-native capabilities check (VS Code, GitHub, Azure, AWS, etc.) — prevents re-inventing what the platform already provides
 
-> **Note**: LLM training cutoff limits the recency of information. Use the "manual verification checklist" at the end of any output to cross-check with official documentation.
+> ⚠️ **LLM training cutoff**: LLM knowledge has a cutoff date and may not reflect developments from the past 6–12 months. Always cross-check the “manual verification checklist” at the end of any output against official documentation and GitHub Releases.
 
 → [Q1–Q8 detailed reference](./QUESTIONS.md)
 
