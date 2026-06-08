@@ -1,0 +1,50 @@
+schema_version: "1.0"
+
+extension:
+  id: prior-art-investigation
+  name: "Prior Art Investigation"
+  version: "1.0.0"
+  description: "Auto-trigger prior art checks at spec/plan/tasks phases — concept naming, OSS discovery, failure mode analysis"
+  author: as-we
+  repository: https://github.com/as-we/prior-art-investigation
+  license: MIT
+
+requires:
+  speckit_version: ">=0.7.0"
+
+provides:
+  commands:
+    - name: prior-art-minimal
+      file: commands/prior-art.md
+      description: "Quick prior art check — Q1 (first principles) + Q6 (inversion). Use at spec phase."
+      args: "minimal"
+    - name: prior-art-full
+      file: commands/prior-art.md
+      description: "Full prior art investigation — all 7 questions, OSS matrix, failure modes. Use at plan phase."
+      args: "full"
+    - name: prior-art-sowhat
+      file: commands/prior-art.md
+      description: "Q7 So-What check — verify tasks reflect prior art findings. Use at tasks phase."
+      args: "sowhat"
+
+hooks:
+  before_specify:
+    - command: prior-art-minimal
+      optional: true
+      condition: null
+      description: "Run quick prior art check (Q1+Q6) before writing requirements"
+      prompt: "Run a quick prior art check before specifying requirements? (Q1: Is the problem framed correctly? Q6: How could this fail?)"
+
+  before_plan:
+    - command: prior-art-full
+      optional: true
+      condition: null
+      description: "Run full prior art investigation before implementation planning"
+      prompt: "Run full prior art investigation before planning? (7 questions, OSS discovery, failure modes)"
+
+  before_tasks:
+    - command: prior-art-sowhat
+      optional: true
+      condition: null
+      description: "Verify tasks reflect prior art findings (Q7 So-What)"
+      prompt: "Verify tasks reflect prior art findings before finalizing task list?"

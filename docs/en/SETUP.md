@@ -2,7 +2,7 @@
 
 Choose the integration that fits your toolchain.
 
-**Jump to**: [A. VS Code Agent Skills](#a-vs-code-copilot-chat--agent-skills) | [B. Auto-detect Hook](#b-auto-detect-hook-vs-code--userpromptsubmit) | [C. Claude Desktop](#c-claude-desktop-mcp-server) | [D. Kiro IDE](#d-kiro-ide--hooks--personalities) | [E. VS Code Custom Agent](#e-vs-code-custom-agent-per-project)
+**Jump to**: [A. VS Code Agent Skills](#a-vs-code-copilot-chat--agent-skills) | [B. Auto-detect Hook](#b-auto-detect-hook-vs-code--userpromptsubmit) | [C. Claude Desktop](#c-claude-desktop-mcp-server) | [D. Kiro IDE](#d-kiro-ide--hooks--personalities) | [E. VS Code Custom Agent](#e-vs-code-custom-agent-per-project) | [F. GitHub SpecKit](#f-github-speckit-extension) | [G. Claude Code](#g-claude-code)
 
 ---
 
@@ -212,6 +212,115 @@ Select **Prior Art Investigation** from the Copilot Chat agent dropdown.
 
 ---
 
+## F. GitHub SpecKit Extension
+
+For teams using [GitHub SpecKit](https://github.com/speckit-ai/specify) (`specify` CLI), the extension auto-triggers prior art checks via hooks.
+
+| SpecKit Phase | Hook | Depth |
+|--------------|------|-------|
+| `speckit.specify` | `before_specify` | Minimal (Q1 + Q6) |
+| `speckit.plan` | `before_plan` | Full (7 questions + OSS matrix) |
+| `speckit.tasks` | `before_tasks` | So-What (Q7 only) |
+
+All hooks are `optional: true` — you can skip them without breaking the workflow.
+
+### Install
+
+```bash
+# Option 1: via specify CLI
+specify extension add https://github.com/as-we/prior-art-investigation
+
+# Option 2: manual
+mkdir -p .specify/extensions/prior-art-investigation
+cp -r speckit/ .specify/extensions/prior-art-investigation/
+```
+
+### Register Hooks
+
+Add to your `.specify/extensions.yml` (see `speckit/extensions.yml.sample`):
+
+```yaml
+hooks:
+  before_specify:
+    - extension: prior-art-investigation
+      command: prior-art-minimal
+      enabled: true
+      optional: true
+  before_plan:
+    - extension: prior-art-investigation
+      command: prior-art-full
+      enabled: true
+      optional: true
+  before_tasks:
+    - extension: prior-art-investigation
+      command: prior-art-sowhat
+      enabled: true
+      optional: true
+```
+
+### Manual Invocation
+
+```
+/prior-art minimal  I need to implement an API rate limiter
+/prior-art full     I want to design a distributed caching layer
+/prior-art sowhat   ← verifies tasks reflect prior art findings
+```
+
+### Files
+
+| File | Purpose |
+|------|---------|
+| `speckit/extension.yml` | Extension definition + hook registration |
+| `speckit/extensions.yml.sample` | Sample `.specify/extensions.yml` snippet |
+| `speckit/commands/prior-art.md` | Unified command (minimal / full / sowhat modes) |
+| `.github/agents/prior-art-minimal.agent.md` | Agent for before_specify |
+| `.github/agents/prior-art-full.agent.md` | Agent for before_plan |
+| `.github/agents/prior-art-sowhat.agent.md` | Agent for before_tasks |
+
+---
+
+## G. Claude Code
+
+Claude Code reads `CLAUDE.md` as persistent instructions. Add the provided snippet to trigger prior art checks at the right phases automatically.
+
+### Install
+
+```bash
+# Copy rules file
+cp .kiro/settings/rules/oss-evaluation.md /your-project/.kiro/settings/rules/   # if using Kiro structure
+# Or copy the prompt for standalone use
+cp .github/prompts/prior-art-check.prompt.md /your-project/.github/prompts/
+
+# Add the CLAUDE.md snippet
+cat claude-code/CLAUDE.md.snippet  # review, then append to your CLAUDE.md
+```
+
+### How It Works
+
+With the snippet in `CLAUDE.md`, Claude Code will:
+
+| Phase | Trigger | Depth |
+|-------|---------|-------|
+| Writing requirements / spec | Automatic (via CLAUDE.md) | Minimal (Q1 + Q6) |
+| Design / planning | Automatic (via CLAUDE.md) | Full (7 questions + OSS matrix) |
+| Task generation | Automatic (via CLAUDE.md) | So-What (Q7) |
+
+### Manual Invocation
+
+```
+# At spec phase (minimal)
+Run a quick prior art check on [feature]. Use Q1 (first principles) and Q6 (inversion). Record findings in research.md.
+
+# At plan phase (full)
+Run a full prior art investigation on [feature]. Apply all 7 questions, produce an OSS comparison table. Decide: build / adopt / wrap.
+
+# At tasks phase (So-What)
+Review tasks.md. For each non-trivial task, check whether prior art findings require changes. Apply Q7.
+```
+
+---
+
 ## About the Investigation Questions
 
 For details on Q1–Q8 (intent, sample output, why each matters), see [QUESTIONS.md](./QUESTIONS.md).
+

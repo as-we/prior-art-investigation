@@ -2,7 +2,7 @@
 
 Prior Art Investigation Framework のインストール方法を、使いたいツールに応じて選んでください。
 
-**ジャンプ**: [VS Code Agent Skills](#a-vs-code-copilot-chat--agent-skills) | [自動検知フック](#b-自動検知フックvs-code--userpromptsubmit) | [Claude Desktop](#c-claude-desktopmcpサーバー) | [Kiro IDE](#d-kiro-ide--フックパーソナリティ) | [VS Code カスタムエージェント](#e-vs-codeカスタムエージェントプロジェクト単位)
+**ジャンプ**: [VS Code Agent Skills](#a-vs-code-copilot-chat--agent-skills) | [自動検知フック](#b-自動検知フックvs-code--userpromptsubmit) | [Claude Desktop](#c-claude-desktopmcpサーバー) | [Kiro IDE](#d-kiro-ide--フックパーソナリティ) | [VS Code カスタムエージェント](#e-vs-codeカスタムエージェントプロジェクト単位) | [GitHub SpecKit](#f-github-speckit-extension) | [Claude Code](#g-claude-code)
 
 ---
 
@@ -223,6 +223,100 @@ Copilot Chat のエージェントドロップダウンから **Prior Art Invest
 
 ---
 
+## F. GitHub SpecKit Extension
+
+[GitHub SpecKit](https://github.com/speckit-ai/specify)（`specify` CLI）を使っているチーム向け。フックで自動トリガーされます。
+
+| SpecKit フェーズ | フック | 調査深度 |
+|----------------|------|---------|
+| `speckit.specify` | `before_specify` | Minimal（Q1 + Q6） |
+| `speckit.plan` | `before_plan` | Full（7問 + OSS マトリックス） |
+| `speckit.tasks` | `before_tasks` | So-What（Q7のみ） |
+
+すべてのフックは `optional: true` — スキップしてもワークフローは継続されます。
+
+### インストール
+
+```bash
+# Option 1: specify CLI 経由
+specify extension add https://github.com/as-we/prior-art-investigation
+
+# Option 2: 手動コピー
+mkdir -p .specify/extensions/prior-art-investigation
+cp -r speckit/ .specify/extensions/prior-art-investigation/
+```
+
+### フック登録
+
+`.specify/extensions.yml` に追記（`speckit/extensions.yml.sample` 参照）：
+
+```yaml
+hooks:
+  before_specify:
+    - extension: prior-art-investigation
+      command: prior-art-minimal
+      enabled: true
+      optional: true
+  before_plan:
+    - extension: prior-art-investigation
+      command: prior-art-full
+      enabled: true
+      optional: true
+  before_tasks:
+    - extension: prior-art-investigation
+      command: prior-art-sowhat
+      enabled: true
+      optional: true
+```
+
+### 手動実行
+
+```
+/prior-art minimal  APIレートリミッターを実装したい
+/prior-art full     分散キャッシュ層を設計したい
+/prior-art sowhat   ← タスクが先行技術調査を反映しているか確認
+```
+
+---
+
+## G. Claude Code
+
+Claude Code はプロジェクトルートの `CLAUDE.md` を常駐指示として自動読み込みします。提供のスニペットを追記することで、各フェーズで自動的に prior art チェックが発動します。
+
+### インストール
+
+```bash
+# ルールファイルをコピー
+cp .kiro/settings/rules/oss-evaluation.md /your-project/.kiro/settings/rules/
+
+# CLAUDE.md スニペットを確認・追記
+cat claude-code/CLAUDE.md.snippet  # 内容確認後、CLAUDE.md に追記
+```
+
+### 動作
+
+| フェーズ | トリガー | 調査深度 |
+|---------|---------|---------|
+| 要件定義 / Spec | CLAUDE.md による自動 | Minimal（Q1 + Q6） |
+| 設計 / Plan | CLAUDE.md による自動 | Full（7問 + OSS マトリックス） |
+| タスク生成 | CLAUDE.md による自動 | So-What（Q7） |
+
+### 手動実行
+
+```
+# Spec フェーズ（minimal）
+[機能]について prior art チェックを行ってください。Q1（第一原理）とQ6（反転）を使用し、結果を research.md に記録してください。
+
+# Plan フェーズ（full）
+[機能]について完全な prior art 調査を行ってください。7問すべてを適用し、OSSマトリックスを作成してください。
+
+# Tasks フェーズ（So-What）
+tasks.md を確認し、各タスクが先行技術調査結果を反映しているかチェックしてください。
+```
+
+---
+
 ## 調査の内容について
 
 Q1〜Q8 の詳細（各質問の意図・サンプル出力）は [QUESTIONS.md](./QUESTIONS.md) を参照してください。
+

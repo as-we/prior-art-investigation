@@ -1,0 +1,67 @@
+# Prior Art Investigation — Claude Code Integration
+
+## How Claude Code Works
+
+Claude Code reads `CLAUDE.md` in your project root as persistent instructions.  
+Add the snippet below to your `CLAUDE.md` to trigger prior art checks at the right phases.
+
+---
+
+## Snippet: Copy into your `CLAUDE.md`
+
+```markdown
+## Prior Art Investigation (Required at Each Phase)
+
+Before writing requirements, design, or code, check prior art using the following rules.
+Full rule set: `prior-art-investigation/kiro/settings/rules/oss-evaluation.md`
+(or `.kiro/settings/rules/oss-evaluation.md` if already installed)
+
+### Phase triggers
+
+| Phase | Depth | Questions |
+|-------|-------|-----------|
+| Requirements / Spec | Minimal | Q1 (first principles) + Q6 (inversion) |
+| Design / Plan | Full | Q1–Q7 + OSS matrix + Build vs Use decision |
+| Tasks | So-What | Q7 only — do tasks reflect prior art findings? |
+
+### Rules
+
+1. **Spec phase**: Before writing requirements, answer Q1 and Q6. Add `[Named Concept: ...]` if a concept name is found.
+2. **Plan phase**: Run full investigation. Produce an OSS comparison table. Decide: build / adopt / wrap.
+3. **Tasks phase**: For each non-trivial task, ask "Does prior art change this task?" — replace reinvented-wheel tasks with adoption tasks.
+4. **So What principle**: Finding a concept name is only useful if it changes the design. State the change explicitly.
+5. **Primary sources**: Cite at least one primary source (paper, RFC, GitHub issue) — not a blog post or README.
+```
+
+---
+
+## Installation
+
+```bash
+# Copy the rules file to your project
+cp kiro/settings/rules/oss-evaluation.md .kiro/settings/rules/   # if using Kiro
+# or reference it directly in CLAUDE.md (see snippet above)
+
+# Copy the prompt for manual use
+cp github/prompts/prior-art-check.prompt.md .github/prompts/
+
+# Copy the research template
+cp templates/research.md docs/   # or your preferred location
+```
+
+---
+
+## Manual Invocation
+
+In Claude Code, you can invoke prior art checks directly:
+
+```
+# At spec phase (minimal)
+Run a quick prior art check on [feature description]. Use Q1 (first principles) and Q6 (inversion) from the prior art rules. Record findings in research.md.
+
+# At plan phase (full)  
+Run a full prior art investigation on [feature description]. Apply all 7 questions and produce an OSS comparison table. Decide whether to build, adopt, or wrap existing solutions.
+
+# At tasks phase (So-What)
+Review the current tasks.md. For each non-trivial task, check whether prior art findings require changes. Apply Q7: "Does the concept name change this task?"
+```

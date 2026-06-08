@@ -1,0 +1,34 @@
+# extensions.yml — sample (after adding prior-art-investigation extension)
+#
+# Add the following hooks to your .specify/extensions.yml.
+# Each hook is optional: true, so skipping won't break the workflow.
+#
+# Copy to: .specify/extensions.yml
+
+hooks:
+  before_specify:
+    - extension: prior-art-investigation
+      command: prior-art-minimal
+      enabled: true
+      optional: true
+      condition: null
+      description: "Run quick prior art check (Q1+Q6) before writing requirements"
+      prompt: "Run a quick prior art check before specifying requirements?"
+
+  before_plan:
+    - extension: prior-art-investigation
+      command: prior-art-full
+      enabled: true
+      optional: true
+      condition: null
+      description: "Run full prior art investigation before implementation planning"
+      prompt: "Run full prior art investigation before planning?"
+
+  before_tasks:
+    - extension: prior-art-investigation
+      command: prior-art-sowhat
+      enabled: true
+      optional: true
+      condition: null
+      description: "Verify tasks reflect prior art findings (Q7 So-What)"
+      prompt: "Verify tasks reflect prior art findings before finalizing task list?"
