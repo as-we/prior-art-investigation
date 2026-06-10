@@ -30,13 +30,51 @@ It returns:
 
 ---
 
-## How to Use
+## It Also Works for OSS and Technology Selection
 
-| Mode | Use When | Output |
-|------|----------|--------|
-| `minimal` | Early concept check, before design | Concept name + quick OSS list + risk flags |
-| `full` | Architecture decisions, new subsystem design | Research lineage + OSS matrix + tradeoffs + failure modes |
-| `selector` | Not sure which to use | Auto-routes to minimal or full |
+Prior art investigation isn't only for research concepts. You don't need to be building ML systems to benefit.
+
+**OCR / PDF library selection** — evaluating Tesseract vs EasyOCR vs cloud APIs before writing a single line of integration code. The framework surfaces accuracy benchmarks, license tiers, and maintenance health from primary sources.
+
+**Programming language & runtime decisions** — when your stack has specific constraints (async model, ecosystem maturity, WASM support), the framework returns tradeoffs from real postmortems and RFC discussions rather than Stack Overflow opinions.
+
+**Any new dependency decision** — the evaluation criteria in the prompts are not fixed. Because it's a prompt collection, you can adjust the selection matrix for your context. The underlying question is always:
+
+> *What do I need to know before I commit to this?*
+
+- Is this author an individual or an organization? (Long-term maintenance signal)
+- When was the last commit? (Health signal)
+- What's the license tier? (Legal risk signal — MIT/Apache = Tier 1, GPL = Tier 3, AGPL = do not adopt)
+- How does it compare to the two closest alternatives?
+
+---
+
+## Modes & Output
+
+| Mode | Phase | Time | What You Get |
+|------|-------|------|-------------|
+| `minimal` | Requirements / Spec | ~5 min | Concept name + quick OSS list + risk flags (Q1 + Q6) |
+| `full` | Design / Plan | ~20 min | Research lineage + OSS matrix + tradeoffs + failure modes (Q1–Q7) |
+| `sowhat` | Tasks | ~2 min | Which tasks to change based on prior art (Q7 only) |
+| `selector` | Any | — | Auto-routes to minimal or full |
+
+**The output gets recorded.** Each investigation writes to `research.md` — future team members (or future you) can see what was evaluated and why:
+
+```
+## Named Concept
+| Field       | Value                                               |
+|-------------|-----------------------------------------------------|
+| Concept     | Knowledge Distillation                              |
+| Published   | 2015 / Hinton et al., NeurIPS                       |
+| Maturity    | ✅ Production Ready                                  |
+| Design impact | Use temperature scaling; add quality gate on LLM labels |
+
+## OSS Decision
+| Package         | License    | Last Commit | Verdict                      |
+|-----------------|------------|-------------|------------------------------|
+| HF transformers | Apache-2.0 | Active      | ✅ Adopted                    |
+| LLaMA-Factory   | Apache-2.0 | Active      | ❌ Overkill for this use case |
+```
 
 <details>
 <summary><strong>Example: full mode output</strong></summary>
@@ -70,6 +108,32 @@ It returns:
 - **Verify**: Always A/B test against direct training
 
 </details>
+
+---
+
+## SDD Framework Integration
+
+The framework runs at different depths **automatically** depending on the phase — no manual triggering needed.
+
+| Phase | Depth | Questions | Auto-triggers in |
+|-------|-------|-----------|-----------------|
+| Requirements / Spec | Minimal | Q1 + Q6 | SpecKit `before_specify`, Kiro `requirements` hook, Claude Code CLAUDE.md |
+| Design / Plan | Full | Q1–Q7 | SpecKit `before_plan`, Kiro `design` hook, Claude Code CLAUDE.md |
+| Tasks | So-What | Q7 | SpecKit `before_tasks`, Claude Code CLAUDE.md |
+
+**GitHub SpecKit** (VS Code + GitHub Copilot):
+```bash
+specify extension add https://github.com/as-we/prior-art-investigation
+```
+Registers `before_specify`, `before_plan`, `before_tasks` hooks automatically.
+
+**Kiro SDD**: Copy `.kiro/hooks/` to your project — hooks fire at requirements and design phases.
+
+**Claude Code**: Add `claude-code/CLAUDE.md.snippet` to your `CLAUDE.md` — persistent instruction fires at each phase automatically.
+
+**Standalone** (any IDE): Use the `/prior-art` slash command or prompt files manually.
+
+→ Full setup instructions: [Setup Guide](docs/en/SETUP.md)
 
 ---
 

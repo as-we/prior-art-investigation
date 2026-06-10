@@ -8,10 +8,11 @@ Before designing, confirm: "This concept already has a name", "There's existing 
 
 ## Which tool are you using?
 
-| Tool | Automatic | Manual | Section |
-|------|-----------|--------|---------|
-| **VS Code + GitHub Copilot** | Reminder notification (opt-in for actual investigation) | `/prior-art` slash command | [→ A](#a-vs-code--github-copilot) |
-| **Kiro IDE** | Auto-fires at SDD phases | Agent dropdown selection | [→ B](#b-kiro-ide) |
+| Tool | Automatic hooks | Manual | Section |
+|------|----------------|--------|------|
+| **VS Code + GitHub Copilot (SpecKit)** | ✅ before_specify / before_plan / before_tasks | `/prior-art` slash command | [→ A](#a-vs-code--github-copilot) |
+| **Kiro IDE** | ✅ Auto-fires at requirements & design phases | Agent dropdown selection | [→ B](#b-kiro-ide) |
+| **Claude Code** | ✅ CLAUDE.md persistent instruction | Direct chat prompt | [→ D](#d-claude-code) |
 | **Claude Desktop** | None | MCP tool calls | [→ C](#c-claude-desktop) |
 
 **Reading the output**: [Reading the output](#reading-the-output) (Q1–Q8 meaning) | [When to skip](#when-to-skip)
@@ -36,16 +37,29 @@ When your prompt contains keywords like "design", "architecture", "implement", e
 
 ---
 
-### Auto 2 — SDD phase integration (opt-in)
+### Auto 2 — SDD phase integration
 
-**GitHub SpecKit (VS Code Copilot)**: no automatic hooks — run manually before each phase:
+**GitHub SpecKit (VS Code Copilot)**: install the Extension to get automatic hooks at all three phases:
 
+```bash
+specify extension add https://github.com/as-we/prior-art-investigation
 ```
-# Before speckit.specify (requirements phase)
-/prior-art minimal #web <feature topic>
 
-# Before speckit.plan (design phase)
-/prior-art full #web <feature topic>
+Then register hooks in `.specify/extensions.yml` (see `speckit/extensions.yml.sample`):
+
+| SpecKit phase | Hook | Mode |
+|--------------|------|------|
+| `speckit.specify` | `before_specify` | minimal (Q1+Q6) |
+| `speckit.plan` | `before_plan` | full (Q1–Q7) |
+| `speckit.tasks` | `before_tasks` | sowhat (Q7) |
+
+All hooks are `optional: true` — you can skip them without breaking the workflow.
+
+To run manually before each phase:
+```
+/prior-art minimal #web <feature topic>   ← before specify
+/prior-art full #web <feature topic>      ← before plan
+/prior-art sowhat                         ← before tasks
 ```
 
 **Kiro SDD (automatic)**: to trigger actual investigation at the end of Kiro SDD sessions, enable the hooks in your project:
@@ -244,6 +258,48 @@ Call MCP tools directly in Claude chat:
 **Example**:
 ```
 Use load_full to investigate "knowledge distillation architecture with LLMs"
+```
+
+---
+
+## D. Claude Code
+
+> Not installed yet? → [SETUP.md](./SETUP.md#g-claude-code)
+
+### Auto — CLAUDE.md persistent instruction
+
+Claude Code reads `CLAUDE.md` as persistent instructions at the start of every session. Once configured, prior art checks fire **automatically** at each SDD phase — no manual triggering needed.
+
+| Phase | Fires when | Mode |
+|-------|-----------|------|
+| Spec / requirements | Writing requirements | Minimal (Q1+Q6) |
+| Design / plan | Design decisions | Full (Q1–Q7) |
+| Tasks | Task generation | So-What (Q7) |
+
+### Setup
+
+```bash
+cp .kiro/settings/rules/oss-evaluation.md /your-project/.kiro/settings/rules/
+# Then append claude-code/CLAUDE.md.snippet to your CLAUDE.md
+cat claude-code/CLAUDE.md.snippet >> /your-project/CLAUDE.md
+```
+
+### Manual
+
+Invoke directly in Claude Code chat:
+
+```
+# Spec phase (minimal)
+Run a quick prior art check on [feature]. Use Q1 (first principles) and Q6 (inversion).
+Record findings in research.md.
+
+# Plan phase (full)
+Run a full prior art investigation on [feature]. Apply all 7 questions.
+Produce an OSS comparison table. Decide: build / adopt / wrap.
+
+# Tasks phase (So-What)
+Review tasks.md. For each non-trivial task, check whether prior art findings
+require changes. Apply Q7: "Does the concept name change this task?"
 ```
 
 ---

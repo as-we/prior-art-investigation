@@ -8,10 +8,11 @@
 
 ## どのツールを使っていますか？
 
-| ツール | 自動実行 | 手動実行 | セクション |
-|--------|---------|---------|-----------|
-| **VS Code + GitHub Copilot** | リマインダー通知（opt-in で実調査） | `/prior-art` スラッシュコマンド | [→ A](#a-vs-code--github-copilot) |
-| **Kiro IDE** | SDD フェーズで自動発火 | エージェントドロップダウン選択 | [→ B](#b-kiro-ide) |
+| ツール | 自動フック | 手動実行 | セクション |
+|--------|----------|---------|----------|
+| **VS Code + GitHub Copilot（SpecKit）** | ✅ before_specify / before_plan / before_tasks | `/prior-art` スラッシュコマンド | [→ A](#a-vs-code--github-copilot) |
+| **Kiro IDE** | ✅ 要件・設計フェーズで自動発火 | エージェントドロップダウン選択 | [→ B](#b-kiro-ide) |
+| **Claude Code** | ✅ CLAUDE.md 常駐指示 | チャット直接指示 | [→ D](#d-claude-code) |
 | **Claude Desktop** | なし | MCP ツール呼び出し | [→ C](#c-claude-desktop) |
 
 **出力の読み方**: [調査結果の読み方](#調査結果の読み方)（Q1〜Q8 の各項目の意味） | [スキップしてよい場面](#スキップしてよい場面)
@@ -36,16 +37,29 @@
 
 ---
 
-### 自動実行 2 — SDD フェーズ連動（opt-in）
+### 自動実行 2 — SDD フェーズ連動
 
-**GitHub SpecKit（VS Code Copilot）の場合**: フックによる自動実行はなく、各フェーズ前に手動で実行します：
+**GitHub SpecKit（VS Code Copilot）の場合**: Extension をインストールすれば3フェーズすべてに自動フックが追加されます：
 
+```bash
+specify extension add https://github.com/as-we/prior-art-investigation
 ```
-# speckit.specify 前（要件フェーズ）
-/prior-art minimal #web <機能トピック>
 
-# speckit.plan 前（設計フェーズ）
-/prior-art full #web <機能トピック>
+`.specify/extensions.yml` にフックを登録（`speckit/extensions.yml.sample` 参照）：
+
+| SpecKit フェーズ | フック | モード |
+|----------------|------|------|
+| `speckit.specify` | `before_specify` | minimal（Q1+Q6） |
+| `speckit.plan` | `before_plan` | full（Q1–Q7） |
+| `speckit.tasks` | `before_tasks` | sowhat（Q7） |
+
+すべてのフックは `optional: true` — スキップしてもワークフローは継続されます。
+
+手動で各フェーズ前に実行する場合：
+```
+/prior-art minimal #web <機能トピック>   ← specify 前
+/prior-art full #web <機能トピック>     ← plan 前
+/prior-art sowhat                        ← tasks 前
 ```
 
 **Kiro SDD（自動連動）の場合**: Kiro SDD のセッション終了後に**実際の調査を自動実行**させるには、`.kiro/hooks/` ファイルを有効化します：
@@ -246,6 +260,48 @@ Claude のチャットで以下の MCP ツールを呼び出します：
 **使い方の例**:
 ```
 load_full で「LLM を使った知識蒸留アーキテクチャ」を調査して
+```
+
+---
+
+## D. Claude Code
+
+> 未インストールの場合 → [SETUP.md](./SETUP.md#g-claude-code)
+
+### 自動実行 — CLAUDE.md 常駐指示
+
+Claude Code はセッション開始時に `CLAUDE.md` を常駐指示として読み込みます。設定すると、各 SDD フェーズで**自動的に** prior art チェックが発動します。
+
+| フェーズ | 発火タイミング | モード |
+|---------|-------------|------|
+| Spec / 要件定義 | 要件を書くとき | Minimal（Q1+Q6） |
+| Design / 設計 | 設計判断をするとき | Full（Q1–Q7） |
+| Tasks / タスク | タスク生成時 | So-What（Q7） |
+
+### セットアップ
+
+```bash
+cp .kiro/settings/rules/oss-evaluation.md /your-project/.kiro/settings/rules/
+# CLAUDE.md.snippet を CLAUDE.md に追記
+cat claude-code/CLAUDE.md.snippet >> /your-project/CLAUDE.md
+```
+
+### 手動実行
+
+Claude Code のチャットに直接入力：
+
+```
+# Spec フェーズ（minimal）
+[機能]について prior art チェックを行ってください。Q1（第一原理）とQ6（反転）を使用し、
+結果を research.md に記録してください。
+
+# Plan フェーズ（full）
+[機能]について完全な prior art 調査を行ってください。7問すべてを適用し、
+OSSマトリックスを作成して build / adopt / wrap の判断を出してください。
+
+# Tasks フェーズ（So-What）
+tasks.md を確認し、各タスクが先行技術調査結果を反映しているかチェックしてください。
+先行技術から学んだことで変更すべきタスクがあればリストアップしてください。
 ```
 
 ---
